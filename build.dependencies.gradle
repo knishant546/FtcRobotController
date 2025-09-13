@@ -23,6 +23,10 @@ dependencies {
     implementation 'dev.nextftc:ftc:1.0.0'
     // For hardware module
     implementation 'dev.nextftc:hardware:1.0.0'
+    // For PID controller
+    implementation 'dev.nextftc:control:1.0.0'
+    // For Bindings gamepad polling/edge detection
+    implementation 'dev.nextftc:bindings:1.0.1'
 
 }
 
