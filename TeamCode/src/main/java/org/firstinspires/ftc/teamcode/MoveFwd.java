@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
-@TeleOp( name = "Move Fwd Jan")
+@TeleOp( name = "Move Fwd Jan-2")
 public class MoveFwd extends LinearOpMode {
 
     DcMotor leftMoter = null;
@@ -22,9 +22,10 @@ public class MoveFwd extends LinearOpMode {
          backLeft = hardwareMap.get(DcMotor.class, "backleft");
          backRight = hardwareMap.get(DcMotor.class, "backright");
 
+        telemetry.addData("Instr", "WHEEL SETTING UP");
         leftMoter.setDirection(DcMotorSimple.Direction.FORWARD);
         rightMoter.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry.addData("Instr", "Click Start to mmove FWD");
         telemetry.update();

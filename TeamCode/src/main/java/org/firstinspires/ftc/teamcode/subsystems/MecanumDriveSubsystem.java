@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -28,21 +29,19 @@ public class MecanumDriveSubsystem implements Subsystem {
 
     private MecanumDriveSubsystem() {
 
+        telemetry.addData("Instr", "Mecanum wheel drive subsystem SETTING UP");
+
         // Initialize your motors
-        frontLeft = new MotorEx(hardwareMap.get(DcMotorEx.class, "frontleft"));
-        frontRight = new MotorEx(hardwareMap.get(DcMotorEx.class, "frontright"));
-        backLeft = new MotorEx(hardwareMap.get(DcMotorEx.class, "backleft"));
-        backRight = new MotorEx(hardwareMap.get(DcMotorEx.class, "backright"));
+        frontLeft = new MotorEx("frontleft");
+        frontRight = new MotorEx("frontright").reversed();
+        backLeft = new MotorEx("backleft");
+        backRight = new MotorEx("backright").reversed();
 
         mecanumDrive = new MecanumDriverControlled(frontLeft, frontRight, backLeft, backRight,
                 Gamepads.gamepad1().leftStickX(),
                 Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().rightStickX()
         );
-        //        frontLeft = new MotorEx("frontleft");
-//        frontRight = new MotorEx("frontright");
-//        backLeft = new MotorEx("backleft");
-//        backRight = new MotorEx("backright");
     }
 
     public void driveAutonomousForward(double power, double distance) {

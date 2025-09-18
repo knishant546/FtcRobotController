@@ -27,6 +27,8 @@ dependencies {
     implementation 'dev.nextftc:control:1.0.0'
     // For Bindings gamepad polling/edge detection
     implementation 'dev.nextftc:bindings:1.0.1'
+    //extensions by nextftc for pedro pathing
+    implementation 'dev.nextftc.extensions:pedro:1.0.0'
 
 }
 
