@@ -1,0 +1,37 @@
+Configure Git identity (once per machine):
+
+git config --global user.name "Their Name"
+git config --global user.email "their@email.com"
+
+
+Clone your fork directly:
+
+git clone https://github.com/knishant546/FtcRobotController.git
+cd FtcRobotController
+
+
+Make a new branch, commit, and push with upstream:
+
+git checkout -b feature/my-work
+git add .
+git commit -m "my changes"
+git push -u origin feature/my-work
+
+First time push may open webpage for login 
+  
+  ---PULL request in browser for merging------------
+  While creating Pull request in browser, 
+  
+  selecting base repo for merging , 
+  
+  select the one on left dropdown that is ours "knishant546/FtcRobotController"
+not the FTC original or anything else 
+
+
+
+
+OPTIONal -
+
+ git branch --set-upstream-to=origin/master <branch name>
+ 
+ git remote set-url origin https://github.com/knishant546/FtcRobotController.git
