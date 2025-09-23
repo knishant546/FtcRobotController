@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+/*package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
@@ -49,14 +49,14 @@ public class MecanumDriveSubsystem implements Subsystem {
         frontLeft.setDirection(1);
         frontRight.setDirection(-1);
         backLeft.setDirection(-1);
-        backRight.setDirection(-1);
+        backRight.setDirection(-1);*/
         /*
         1440 encoder counts per revolution means the motor's encoder generates 1440 distinct pulses (counts)
          for every full rotation of the motor shaft. This value is used to measure rotation and
          calculate distance traveled by the wheel. It is a common specification
          for certain DC motors with built-in encoders.
          */
-
+/*
         double countsPerInch = 1440.0 / (4 * Math.PI); // Example for 4-inch diameter wheels with 1440 counts per revolution
         int target = (int)(distance * countsPerInch);
         while (frontLeft.getCurrentPosition() < target &&
@@ -83,5 +83,26 @@ public class MecanumDriveSubsystem implements Subsystem {
 
     public void drive() {
         mecanumDrive.schedule();
+    }
+}
+*/
+package org.firstinspires.ftc.teamcode.subsystems;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+public class MecanumDriveSubsystem {
+    public final DcMotor lf, rf, lb, rb;
+    public MecanumDriveSubsystem(HardwareMap hw) {
+        lf = hw.get(DcMotor.class, "leftFrontDrive");
+        rf = hw.get(DcMotor.class, "rightFrontDrive");
+        lb = hw.get(DcMotor.class, "leftBackDrive");
+        rb = hw.get(DcMotor.class, "rightBackDrive");
+        rf.setDirection(DcMotor.Direction.REVERSE);
+        rb.setDirection(DcMotor.Direction.REVERSE);
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 }

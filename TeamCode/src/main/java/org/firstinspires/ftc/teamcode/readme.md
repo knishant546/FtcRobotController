@@ -129,3 +129,51 @@ Note: Some names start with "Team" and others start with "team".  This is intent
 5)  Add:    include ':Team0417' to the "/settings.gradle" file.
     
 6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""
+
+
+
+
+=================================================================
+Pinpoint → GoBildaPinpointDriver (I²C)
+
+Localizer → PinpointLocalizer (adapts Pinpoint → Pedro Pose)
+
+Pedro → Constants.createFollower(...) (constructs Follower and plugs the localizer)
+
+NextFTC → PedroComponent(Constants::createFollower) (owns/schedules follower)
+
+OpMode → builds PathChain and runs new FollowPath(chain)
+
+
+git history
+
+
+===========================================================================================
+Hardware names (RC config):
+
+Motors: leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive
+
+I²C device: odo (Pinpoint)
+
+(If you add the AprilTag demo) Webcam: Webcam 1 or switch to the built-in camera
+
+Units: The localizer converts to inches + radians (which Pedro uses here). Keep your poses/paths in inches.
+
+Method name variance: If your Follower class doesn’t have setLocalizer(...) but has setExternalPoseSupplier(...) (or vice versa), just keep the one that compiles — same lambda body.
+
+Right side reversed: we reversed rf/rb in the subsystem; if your wiring is different, adjust.
+
+If you hit a compile error on the single Follower constructor line, paste the error and I’ll swap in the exact constructor signature for com.pedropathing:ftc:2.0.1 on your setup.
+
+
+OpMode that uses AprilTag detections in the init loop to:
+
+Decide which path to follow (e.g. Tag #1 = Path A, Tag #2 = Path B, else Path C).
+
+(Optional) Correct/seed the pose if your SDK’s AprilTagDetection exposes a robot field pose.
+
+
+=============================
+PedroPinpointSimpleAuto → just pathing (check Pinpoint + Pedro).
+
+AutoPathWithTags → adds AprilTag detection in init loop, picks a path, and runs it with Pinpoint odometry.
