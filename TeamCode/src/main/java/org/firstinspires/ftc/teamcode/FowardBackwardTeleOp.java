@@ -170,7 +170,8 @@ public class FowardBackwardTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(Spinner.getInstance().startSpinner)
                 .whenBecomesFalse(Spinner.getInstance().stopSpinner);
-        Gamepads.gamepad1().dpadUp()
+
+        Gamepads.gamepad1().a()
                 .whenBecomesTrue(Shooter.getInstance().startShooter)
                 .whenBecomesFalse(Shooter.getInstance().stopShooter);
 
