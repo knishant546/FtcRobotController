@@ -20,12 +20,15 @@ public class Spinner implements Subsystem {
 
     private Spinner() {
     }
-
-    public void setPower(double power) {
-        pow = power;
+    public float getSpinnerPower() {
+        return (float) spinnerMotor.getPower();
     }
 
-    public Command startSpinner = new SetPower(spinnerMotor,pow);
+    public Command startSpinner() {
+        return new SetPower(spinnerMotor,pow);
+    }
 
-    public Command stopSpinner = new SetPower(spinnerMotor,0.0);
+    public Command stopSpinner() {
+        return new SetPower(spinnerMotor,0.0);
+    }
 }
