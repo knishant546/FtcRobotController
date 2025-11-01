@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.CommandGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -40,6 +41,8 @@ public class SpinnerSensorShooterTestBench extends NextFTCOpMode {
 
     private ParallelGroup _cgrp;
 
+    private SequentialGroup _sgrp;
+
     @Override
     public void onUpdate() {
 
@@ -54,17 +57,20 @@ public class SpinnerSensorShooterTestBench extends NextFTCOpMode {
 
             Command stopCommand = Spinner.getInstance().stopSpinner();
             stopCommand.schedule();
-            if(stopCommand.isDone() && (_cgrp == null || _cgrp.isDone())) {
-                if(_cgrp == null) {
+            if(stopCommand.isDone() && (_sgrp == null || _sgrp.isDone())) {
+                if(_sgrp == null) {
                     _cgrp = new ParallelGroup(Spinner.getInstance().startSpinner(),
-                            Lift.getInstance().liftUp()
+                            Lift.getInstance().liftUp());
+
+                    _sgrp = new SequentialGroup(
+                            _cgrp,Lift.getInstance().liftDown()
                     );
-                    _cgrp.schedule();
+
+                    _sgrp.schedule();
                 }
 
-                if(_cgrp.isDone()) {
-                    Lift.getInstance().liftDown().schedule();
-                    _cgrp = null;
+                if(_sgrp.isDone()) {
+                    _sgrp = null;
                 }
             }
         } else {
