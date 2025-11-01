@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
@@ -21,8 +22,9 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.impl.ServoEx;
 
-@TeleOp(name = "Sample: Forward Backward TeleOp Without Components")
+@TeleOp(name = "Sample Latest: Forward Backward TeleOp Without Components")
 public class FowardBackwardTeleOp extends NextFTCOpMode {
 
     private Limelight3A limelight;
@@ -35,7 +37,9 @@ public class FowardBackwardTeleOp extends NextFTCOpMode {
         telemetry.addData("Instr", "Forward Backward Components adding");
 
         addComponents(
-                new SubsystemComponent(Intake.getInstance()),
+                new SubsystemComponent(
+                        Intake.getInstance(),
+                Spinner.getInstance()),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -98,6 +102,18 @@ public class FowardBackwardTeleOp extends NextFTCOpMode {
         //Creating Color Sensor instance
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
         colorSensor.setGain(8);
+
+        //
+        telemetry.addData("LeftServo curr",Lift.getInstance().getLeftPosition());
+        telemetry.addData("RightServo curr",Lift.getInstance().getRightPosition());
+
+        //Lift.getInstance().reset();
+
+        telemetry.addData("LeftServo Init pos",Lift.getInstance().getLeftPosition());
+        telemetry.addData("RightServo Init pos",Lift.getInstance().getRightPosition());
+
+        telemetry.update();
+
     }
 
     private final MotorEx frontLeftMotor = new MotorEx("frontleft");
@@ -118,6 +134,10 @@ public class FowardBackwardTeleOp extends NextFTCOpMode {
 
         getColorType("color");
         telemetry.update();
+
+        telemetry.addData("LeftServo", Lift.getInstance().getLeftPosition());
+        telemetry.addData("RightServo", Lift.getInstance().getRightPosition());
+
     }
 
     @Override
@@ -172,8 +192,15 @@ public class FowardBackwardTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Spinner.getInstance().stopSpinner);
 
         Gamepads.gamepad1().a()
-                .whenBecomesTrue(Shooter.getInstance().startShooter)
-                .whenBecomesFalse(Shooter.getInstance().stopShooter);
+                .whenBecomesTrue(Shooter.getInstance().startShooter())
+                .whenBecomesFalse(Shooter.getInstance().stopShooter());
+
+        Gamepads.gamepad1().b()
+                        .whenBecomesTrue(Lift.getInstance().liftUp());
+        Gamepads.gamepad1().x()
+                        .whenBecomesTrue(Lift.getInstance().liftDown());
+
+
 
         telemetry.update();
     }
