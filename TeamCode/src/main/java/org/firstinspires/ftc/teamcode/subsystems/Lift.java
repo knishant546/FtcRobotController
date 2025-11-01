@@ -30,6 +30,7 @@ public class Lift implements Subsystem {
         leftServo.getServo().resetDeviceConfigurationForOpMode();
         rightServo.getServo().resetDeviceConfigurationForOpMode();
         leftServo.getServo().setDirection(Servo.Direction.REVERSE);
+        this.liftDown().schedule();
         //leftServo.setPosition(0.2);
         //rightServo.setPosition(0.2);
 
@@ -45,7 +46,7 @@ public class Lift implements Subsystem {
     public Command liftDown() {
         return new SetPositions(
                 new Pair<> (leftServo, 0.5),
-                new Pair<> (rightServo, 0.5)
+                new Pair<> (rightServo, 0.6)
         );
     }
 
