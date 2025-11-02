@@ -24,6 +24,11 @@ public class Spinner implements Subsystem {
         return (float) spinnerMotor.getPower();
     }
 
+    @Override
+    public void initialize() {
+        this.stopSpinner().schedule();
+    }
+
     public Command startSpinner() {
         return new SetPower(spinnerMotor,pow);
     }

@@ -23,13 +23,18 @@ public class Shooter implements Subsystem {
     private Shooter() {
     }
 
+    @Override
+    public void initialize() {
+        this.stopShooter().schedule();
+    }
+
 
     public float getShooterPower() {
         return (float) shootermotor.getPower();
     }
 
     public Command startShooter() {
-        double pow = -1.0;
+        double pow = 1.0;
         return new SetPower(shootermotor,pow);
     }
 
