@@ -19,6 +19,11 @@ public class Intake implements Subsystem {
     private Intake() {
     }
 
+    @Override
+    public void initialize() {
+        this.stopIntake.schedule();
+    }
+
     public Command startIntake = new SetPower(intakeMotor,-1.0);
 
     public Command stopIntake = new SetPower(intakeMotor,0.0);
