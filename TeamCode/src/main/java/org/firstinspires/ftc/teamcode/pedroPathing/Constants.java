@@ -43,8 +43,8 @@ public class Constants {
     Here is the doc: https://pedropathing.com/docs/pathing/tuning/localization/pinpoint
      */
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(0.0)
-            .strafePodX(6.1)
+            .forwardPodY(0)
+            .strafePodX(0.25)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)

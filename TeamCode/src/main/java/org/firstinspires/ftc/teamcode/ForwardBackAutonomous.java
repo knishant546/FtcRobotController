@@ -67,10 +67,10 @@ public class ForwardBackAutonomous  extends NextFTCOpMode {
     private Command autonomousRoutine() {
 
         return new SequentialGroup(
-                new FollowPath(MoveBackward, true, 0.2),
-                new FollowPath(StrafeLeft, true, 0.3),
-                new FollowPath(StrafeRight, true, 0.3),
-                new FollowPath(MoveForward, true, 0.3)
+                new FollowPath(MoveBackward, true, 0.5),
+                new FollowPath(StrafeLeft, true, 0.5),
+                new FollowPath(StrafeRight, true, 0.5),
+                new FollowPath(MoveForward, true, 0.5)
         );
     }
 

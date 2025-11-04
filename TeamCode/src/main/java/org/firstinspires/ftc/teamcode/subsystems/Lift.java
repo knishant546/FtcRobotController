@@ -3,6 +3,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import kotlin.Pair;
 
 import dev.nextftc.core.commands.Command;
@@ -50,6 +52,12 @@ public class Lift implements Subsystem {
         );
     }
 
+    public Command LiftUpDown() {
+        return new SequentialGroup(
+                liftUp().thenWait(0.5),
+                liftDown().thenWait(0.5)
+        );
+    }
 
     public Double getLeftPosition() {
         return leftServo.getPosition();
