@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Constants.localizerCon
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
+
+import java.util.List;
 
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -25,6 +28,10 @@ public class AprilTagTestBench extends NextFTCOpMode {
     private Limelight3A limelight;
 
     //private PinpointLocalizer pinpoint;
+
+    private static final int ppgTagID = 23;
+    private static final int pgpTagID = 22;
+    private static final int gppTagID = 21;
 
     public AprilTagTestBench() {
 
@@ -70,6 +77,16 @@ public class AprilTagTestBench extends NextFTCOpMode {
 
             telemetry.addData("Capture Latency", llResult.getCaptureLatency());
             telemetry.addData("Targeting Latency", llResult.getTargetingLatency());
+
+            List<LLResultTypes.FiducialResult> fiducialResults = llResult.getFiducialResults();
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f",
+                        fr.getFiducialId(),
+                        fr.getFamily(),
+                        fr.getTargetXDegrees(),
+                        fr.getTargetYDegrees());
+            }
+
         }
 
         telemetry.update();
@@ -95,6 +112,11 @@ public class AprilTagTestBench extends NextFTCOpMode {
                 .whenBecomesTrue(Intake.getInstance().startIntake);
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Intake.getInstance().stopIntake);
+    }
+
+    @Override
+    public void onStop() {
+        limelight.stop();
     }
 
 }
