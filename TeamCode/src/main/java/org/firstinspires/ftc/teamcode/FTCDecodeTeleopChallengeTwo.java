@@ -46,7 +46,7 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
     }
 
     private Command onColorDetectedBegin = new InstantCommand(() -> {
-        new Delay(0.4).then(
+        new Delay(0.2).then(
                 Spinner.getInstance().stopSpinner()).schedule();
     }).requires(this);
 
@@ -60,19 +60,28 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
         float[] rgba = Utils.getRGBA(colorSensor);
         String color = Utils.getColorName(rgba);
 
-        telemetry.addData("Color Detected:", color);
-        telemetry.addData("Spinner Power",
-                Spinner.getInstance().getSpinnerPower());
-        telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
+        boolean ball_found = false;
+        if(color.equals("green") || color.equals("purple"))
+            ball_found = true;
 
-        if(!color.equals("Nothing") ) {
+        if(ball_found) {
             telemetry.addData("Object Detected", "By Sensor");
             onColorDetectedBegin.thenWait(0.2).requires(this).schedule();
             telemetry.addData("scheduled seq grp", "By Jan");
             telemetry.addData("Spinner", "Stopped");
+
+            telemetry.addData("Color Detected:", color);
+            telemetry.addData("Spinner Power",
+                    Spinner.getInstance().getSpinnerPower());
+            telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
         }
         else {
-            Spinner.getInstance().startSpinner().schedule();
+            new InstantCommand(
+                    () -> {
+                        Spinner.getInstance().startSpinner().schedule();
+                    }
+            ).requires(this).schedule();
+
         }
 
         telemetry.update();
