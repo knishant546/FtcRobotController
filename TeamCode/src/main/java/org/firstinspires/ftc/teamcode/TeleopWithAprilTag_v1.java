@@ -1,17 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
+import java.util.List;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -19,11 +24,12 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@TeleOp(name="FTCDecodeTeleopChallengeTwo")
-public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
+@TeleOp(name="TeleopWithAprilTag_v2")
+public class TeleopWithAprilTag_v1 extends NextFTCOpMode {
     private NormalizedColorSensor colorSensor;
 
-    public FTCDecodeTeleopChallengeTwo() {
+
+    public TeleopWithAprilTag_v1() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -39,11 +45,16 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
         //Set up the colorSensor
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
         colorSensor.setGain(10);
+        Shooter.getInstance().setTelemetry(telemetry);
         Lift.getInstance().initialize();
         Spinner.getInstance().initialize();
         Shooter.getInstance().initialize();
         Intake.getInstance().initialize();
+        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        AprilTag.getInstance(limelight);
     }
+
+
 
     private Command onColorDetectedBegin = new InstantCommand(() -> {
         new Delay(0.4).then(
@@ -76,6 +87,8 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
             Spinner.getInstance().startSpinner().schedule();
         }
 
+        telemetry.addData("AprilTag Distance:",AprilTag.getInstance().getAprilTagDistance());
+
         telemetry.update();
     }
 
@@ -91,7 +104,7 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
                 .whenBecomesTrue(Intake.getInstance().stopIntake);
 
         Gamepads.gamepad2().y()
-                .whenBecomesTrue(Shooter.getInstance().startShooter());
+                .whenBecomesTrue(Shooter.getInstance().startShooterWithAprilTag());
 
         Gamepads.gamepad2().a()
                 .whenBecomesTrue(Shooter.getInstance().stopShooter());

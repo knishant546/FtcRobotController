@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.AprilTag;
+
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.core.commands.Command;
@@ -13,8 +16,14 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class Shooter implements Subsystem {
 
     private static final Shooter INSTANCE = new Shooter();
+    Telemetry telemetry;
+    private double pow = 1.0;
     public static Shooter getInstance() {
         return INSTANCE;
+    }
+
+    public void setTelemetry(Telemetry telemetry ) {
+        this.telemetry = telemetry;
     }
 
     //TODO will change this name to pickMotor
@@ -34,9 +43,22 @@ public class Shooter implements Subsystem {
     }
 
     public Command startShooter() {
-        double pow = 1.0;
-        return new SetPower(shootermotor,pow);
+        return new SetPower(shootermotor,this.pow);
     }
+
+    /**
+     * Use this to change the power Dynamically. Mostly with April Tag detection
+     * @return
+     */
+    public Command startShooterWithAprilTag() {
+        double distance = AprilTag.getInstance().getAprilTagDistance()/100;
+        telemetry.addData("Power given:",distance);
+        distance = distance > 1 ? 1 : distance;
+        telemetry.addData("After Rounding Power given:",distance);
+        telemetry.update();
+        return new SetPower(shootermotor, distance);
+    }
+
 
     public Command stopShooter() {
         double pow = 0.0;
