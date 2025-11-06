@@ -6,9 +6,13 @@ import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.Encoder;
 import com.pedropathing.ftc.localization.constants.DriveEncoderConstants;
+import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     //Mass must be in kg
@@ -17,6 +21,9 @@ public class Constants {
 
     //This is used incase of drive motor encoders
     //See different type of localization here: https://pedropathing.com/docs/pathing/tuning/localization
+    /*
+
+    We are not using driver encoders anymore!!
     public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
             .rightFrontMotorName("frontright")
             .rightRearMotorName("backright")
@@ -28,6 +35,23 @@ public class Constants {
             .rightRearEncoderDirection(Encoder.REVERSE)
             .robotLength(16) //Distance between left and right wheels
             .robotWidth(14); //Distance between front and back wheels
+
+     */
+
+    /*
+    We are using Gobila odometers so we are using the two wheel pinpoint localizer
+    Here is the doc: https://pedropathing.com/docs/pathing/tuning/localization/pinpoint
+     */
+    public static PinpointConstants localizerConstants = new PinpointConstants()
+            .forwardPodY(0)
+            .strafePodX(0.25)
+            .distanceUnit(DistanceUnit.INCH)
+            .hardwareMapName("pinpoint")
+            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
+
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("frontright")
@@ -45,7 +69,7 @@ public class Constants {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
-                .driveEncoderLocalizer(localizerConstants)
+                .pinpointLocalizer(localizerConstants)
                 .build();
     }
 }
