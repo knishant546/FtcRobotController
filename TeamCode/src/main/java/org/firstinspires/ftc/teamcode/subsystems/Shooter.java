@@ -40,13 +40,11 @@ public class Shooter implements Subsystem {
     }
 
     public Command startShooter() {
-
         return new SetPower(shootermotor,pow);
     }
 
     public Command stopShooter() {
-        setShooterPower(0.0);
-        return new SetPower(shootermotor,pow);
+        return new SetPower(shootermotor,0.0);
     }
 
     /*

@@ -22,12 +22,12 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="BlueBack V1")
-public class Auton_two extends NextFTCOpMode {
+@Autonomous(name="BlueBack V1.1")
+public class Auton_three extends NextFTCOpMode {
 
     //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
 
-    Pose startPoseStraight = new Pose(getUnits(16), getUnits(-40), Math.toRadians(230));
+    Pose startPoseStraight = new Pose(getUnits(16), getUnits(-33), Math.toRadians(180));
     Pose adjustPoseToShoot = new Pose(getUnits(62), getUnits(-10), Math.toRadians(220));
 
     Pose moveToPickRow = new Pose(60, -22, Math.toRadians(270));
@@ -42,7 +42,7 @@ public class Auton_two extends NextFTCOpMode {
         return inches * 1;
     }
 
-    public Auton_two() {
+    public Auton_three() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),

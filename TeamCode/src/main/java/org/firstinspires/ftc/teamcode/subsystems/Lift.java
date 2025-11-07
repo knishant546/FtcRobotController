@@ -48,7 +48,7 @@ public class Lift implements Subsystem {
     public Command liftDown() {
         return new SetPositions(
                 new Pair<> (leftServo, 0.5),
-                new Pair<> (rightServo, 0.6)
+                new Pair<> (rightServo, 0.5)
         );
     }
 
