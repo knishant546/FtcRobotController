@@ -20,6 +20,8 @@ public class Shooter implements Subsystem {
     //TODO will change this name to pickMotor
     private MotorEx shootermotor = new MotorEx("shooter");
 
+    private double pow = 1.0;
+
     private Shooter() {
     }
 
@@ -33,13 +35,17 @@ public class Shooter implements Subsystem {
         return (float) shootermotor.getPower();
     }
 
+    public void setShooterPower(double pow) {
+        this.pow = pow;
+    }
+
     public Command startShooter() {
-        double pow = 1.0;
+
         return new SetPower(shootermotor,pow);
     }
 
     public Command stopShooter() {
-        double pow = 0.0;
+        setShooterPower(0.0);
         return new SetPower(shootermotor,pow);
     }
 
