@@ -17,46 +17,42 @@ import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
-@Autonomous(name = "ForwardBackAutonomous with Pedro 1")
-public class ForwardBackAutonomous  extends NextFTCOpMode {
+@Autonomous(name = "Mat2MatAutonomous with Pedro 1")
+public class Mat2MatAutonomous  extends NextFTCOpMode {
 
     //45 inches back, 16 inches left
     //30 units = 45 inches i.e 10 units = 9 inches
     //10 units = 16 inches
-    Pose startPose =  new Pose(60, 100, Math.toRadians(90));
-    PathChain MoveBackward;
-    PathChain StrafeLeft;
-    PathChain MoveForward;
+    Pose startPose =  new Pose(0, 0, Math.toRadians(45));
     PathChain StrafeRight;
+    PathChain MoveForward;
+
+    PathChain MoveDiagonal;
 
     public void populatePaths() {
-        Pose endPose = new Pose(60, 70, Math.toRadians(90));
-        MoveBackward = follower().pathBuilder()
-                .addPath(new BezierLine(startPose, endPose))
-                        .setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
-                .build();
-
-        Pose afterLeftStrafe = new Pose(50, 70, Math.toRadians(90));
-        StrafeLeft = follower().pathBuilder()
-                .addPath(new BezierLine(endPose, afterLeftStrafe))
-                .setLinearHeadingInterpolation(endPose.getHeading(), afterLeftStrafe.getHeading())
-                .build();
-
-
-        Pose afterRightStrafe = new Pose(60, 70, Math.toRadians(90));
-        StrafeRight = follower().pathBuilder()
-                .addPath(new BezierLine(afterLeftStrafe, afterRightStrafe))
-                .setLinearHeadingInterpolation(afterLeftStrafe.getHeading(), afterRightStrafe.getHeading())
-                .build();
-
-        Pose endForwardPose = new Pose(60, 100, Math.toRadians(90));
+        //y positive forward, x positive move right
+        //1/15 units = 35 inches
+        Pose endPose = new Pose(15, 15, Math.toRadians(45));
         MoveForward = follower().pathBuilder()
-                .addPath(new BezierLine(afterRightStrafe, endForwardPose))
-                .setLinearHeadingInterpolation(afterRightStrafe.getHeading(), endForwardPose.getHeading())
+                .addPath(new BezierLine(startPose, endPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
                 .build();
+
+        Pose afterRightStrafe = new Pose(15, 15, Math.toRadians(45));
+//        StrafeRight = follower().pathBuilder()
+//                .addPath(new BezierLine(endPose, afterRightStrafe))
+//                .setLinearHeadingInterpolation(endPose.getHeading(), afterRightStrafe.getHeading())
+//                .build();
+
+        //generate the code for moving diagonally
+//        Pose afterDiagonal = new Pose(30, 30);
+//        MoveDiagonal = follower().pathBuilder()
+//                .addPath(new BezierLine(endPose, afterRightStrafe))
+//                .setLinearHeadingInterpolation(endPose.getHeading(), afterDiagonal.getHeading())
+//                .build();
     }
 
-    public ForwardBackAutonomous() {
+    public Mat2MatAutonomous() {
         addComponents(new PedroComponent(Constants::createFollower));
     }
 
@@ -70,10 +66,11 @@ public class ForwardBackAutonomous  extends NextFTCOpMode {
     private Command autonomousRoutine() {
 
         return new SequentialGroup(
-                new FollowPath(MoveBackward, true, 0.5),
-                new FollowPath(StrafeLeft, true, 0.5),
-                new FollowPath(StrafeRight, true, 0.5),
-                new FollowPath(MoveForward, true, 0.5)
+                new FollowPath(MoveForward, true, 0.3)
+//                ,
+//                new FollowPath(StrafeRight, true, 0.3)
+//                ,
+//                new FollowPath(MoveDiagonal,true, 0.3)
         );
     }
 

@@ -43,10 +43,11 @@ public class Constants {
     Here is the doc: https://pedropathing.com/docs/pathing/tuning/localization/pinpoint
      */
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(0)
-            .strafePodX(0.25)
+            .forwardPodY(0.3)//0
+            .strafePodX(-5.5)//0.25
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
+            //.customEncoderResolution(2998.463/33.10)
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
@@ -61,7 +62,9 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
+            .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .xVelocity(7.6584)
+            .yVelocity(6.9);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
