@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
+import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -11,7 +12,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -19,11 +19,11 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@TeleOp(name="FTCDecodeTeleopChallenge")
-public class FTCDecodeTeleopChallenge extends NextFTCOpMode {
+@TeleOp(name="FTCDecodeTeleopChallengeTwo")
+public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
     private NormalizedColorSensor colorSensor;
 
-    public FTCDecodeTeleopChallenge() {
+    public FTCDecodeTeleopChallengeTwo() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -47,7 +47,7 @@ public class FTCDecodeTeleopChallenge extends NextFTCOpMode {
 
     private Command onColorDetectedBegin = new InstantCommand(() -> {
         new Delay(0.4).then(
-        Spinner.getInstance().stopSpinner()).schedule();
+                Spinner.getInstance().stopSpinner()).schedule();
     }).requires(this);
 
     private Command onLifted = new InstantCommand( () -> {
@@ -64,6 +64,7 @@ public class FTCDecodeTeleopChallenge extends NextFTCOpMode {
         telemetry.addData("Spinner Power",
                 Spinner.getInstance().getSpinnerPower());
         telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
+
 
         if(!color.equals("Nothing") ) {
             telemetry.addData("Object Detected", "By Sensor");
@@ -89,22 +90,22 @@ public class FTCDecodeTeleopChallenge extends NextFTCOpMode {
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Intake.getInstance().stopIntake);
 
-        Gamepads.gamepad1().y()
+        Gamepads.gamepad2().y()
                 .whenBecomesTrue(Shooter.getInstance().startShooter());
 
-        Gamepads.gamepad1().a()
+        Gamepads.gamepad2().a()
                 .whenBecomesTrue(Shooter.getInstance().stopShooter());
 
-        Gamepads.gamepad1().b()
+        Gamepads.gamepad2().b()
                 .whenBecomesTrue(this.onLifted);
 
-        Gamepads.gamepad1().x()
+        Gamepads.gamepad2().x()
                 .whenBecomesTrue(Lift.getInstance().liftDown());
 
-        Gamepads.gamepad1().dpadLeft()
+        Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(Spinner.getInstance().startSpinner());
 
-        Gamepads.gamepad1().dpadRight()
+        Gamepads.gamepad2().dpadRight()
                 .whenBecomesTrue(Spinner.getInstance().stopSpinner());
 
     }

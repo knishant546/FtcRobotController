@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestBench;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
+import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -17,16 +18,16 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@TeleOp(name = "ShootingTeleop")
+@TeleOp(name = "ShootingTeleopDelay")
 
-public class ShootingTeleop  extends NextFTCOpMode {
+public class ShootingTeleopDelay extends NextFTCOpMode {
 
     private NormalizedColorSensor colorSensor;
 
     private boolean firstDetection = false;
 
 
-    public ShootingTeleop() {
+    public ShootingTeleopDelay() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -74,40 +75,37 @@ public class ShootingTeleop  extends NextFTCOpMode {
             telemetry.addData("scheduled seq grp", "By Jan");
             telemetry.addData("Spinner", "Stopped");
             firstDetection = true;
-            telemetry.addData("firstDetection1", firstDetection);
         }
 
         if(!firstDetection) {
             telemetry.addData("Start Spinner", "Running");
             if(Spinner.getInstance().getSpinnerPower() == 0.0)
                 Spinner.getInstance().startSpinner().schedule();
-            telemetry.addData("firstDetection3", firstDetection);
         }
 
+        telemetry.addData("DetectColorState", firstDetection);
         telemetry.update();
     }
 
     private Command stopShooter() {
-        telemetry.addData("Shooting Stopped", "By Jan");
-
         firstDetection = false;
-        telemetry.addData("Shooting Stopped", "By Jan");
-        telemetry.addData("firstDetection2", firstDetection);
-        telemetry.update();
-
         return new SequentialGroup(
                 Shooter.getInstance().stopShooter(),
                 new Delay(0.5)
-        ).requires(this);
+        );
     }
 
-    private Command startwithoutDelayShooter() {
+    private Command startwithDelayShooter() {
         firstDetection = true;
         if(Spinner.getInstance().getSpinnerPower() != -0.6) {
             return new SequentialGroup(
                     Shooter.getInstance().startShooter(),
-                    new Delay(1.0)
-                    //Spinner.getInstance().startSpinner()
+                    new Delay(1.0),
+                    Lift.getInstance().liftUp(),
+                    new Delay(0.5),
+                    Lift.getInstance().liftDown(),
+                    new Delay(1.0),
+                    Spinner.getInstance().startSpinner()
             );
         }
 
@@ -124,7 +122,7 @@ public class ShootingTeleop  extends NextFTCOpMode {
                 .whenBecomesTrue(Intake.getInstance().stopIntake);
 
         Gamepads.gamepad1().y()
-                .whenBecomesTrue(this.startwithoutDelayShooter());
+                .whenBecomesTrue(this.startwithDelayShooter());
 
         Gamepads.gamepad1().a()
                 .whenBecomesTrue(this.stopShooter());

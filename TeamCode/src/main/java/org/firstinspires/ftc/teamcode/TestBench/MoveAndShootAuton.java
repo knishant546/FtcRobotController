@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestBench;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -31,13 +30,21 @@ public class MoveAndShootAuton extends NextFTCOpMode {
     //
     //Pose endPose = new Pose(30/multiplier, 10/multiplier, Math.toRadians(0));
 
-    Pose startPose = new Pose(0, 0, Math.toRadians(0));
-    Pose endPose = new Pose(getUnits(24), 0, Math.toRadians(0));
+    Pose startPose = new Pose(getUnits(2), getUnits(24), Math.toRadians(0));
+    Pose endPose = new Pose(getUnits(11), getUnits(7), Math.toRadians(0));
+
+    Pose endendPose = new Pose(14, 3, Math.toRadians(25));
+
+    Pose movetoPickPose1 = new Pose(37,10, Math.toRadians(25));
+
+    Pose movetoPickPose2 = new Pose(30, 15.5, Math.toRadians(90));
+
+    Pose movetoPickballs = new Pose(30, 45.5, Math.toRadians(90));
 
     //1 unit = 2.333 inches
 
     private double getUnits(double inches) {
-        return inches * 0.5;
+        return inches * 1;
     }
 
     public MoveAndShootAuton() {
@@ -57,15 +64,68 @@ public class MoveAndShootAuton extends NextFTCOpMode {
         PathChain move = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, endPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading())
+                .addPath(new BezierLine(endPose, endendPose))
+                .setLinearHeadingInterpolation(endPose.getHeading(), endendPose.getHeading())
                 //.setConstantHeadingInterpolation(endPose.getHeading())
                 .build();
-        return new FollowPath(move, true, 1.0);
+        return new FollowPath(move, true, 0.7);
+    }
+
+    private Command moveToPick() {
+        PathChain move = follower().pathBuilder()
+                .addPath(new BezierLine(endendPose, movetoPickPose1))
+                .setLinearHeadingInterpolation(endendPose.getHeading(), movetoPickPose1.getHeading())
+                .addPath(new BezierLine(movetoPickPose1, movetoPickPose2))
+                .setLinearHeadingInterpolation(movetoPickPose1.getHeading(), movetoPickPose2.getHeading())
+                //.setConstantHeadingInterpolation(endPose.getHeading())
+                .build();
+        return new FollowPath(move, true, 0.5);
+    }
+
+    private Command moveToPickBalls() {
+        PathChain move = follower().pathBuilder()
+                .addPath(new BezierLine(movetoPickPose2, movetoPickballs))
+                .setLinearHeadingInterpolation(movetoPickPose2.getHeading(), movetoPickballs.getHeading())
+                //.addPath(new BezierLine(movetoPickPose1, movetoPickPose2))
+                //.setLinearHeadingInterpolation(movetoPickPose1.getHeading(), movetoPickPose2.getHeading())
+                //.setConstantHeadingInterpolation(endPose.getHeading())
+                .build();
+        return new FollowPath(move, true, 0.4);
+
+    }
+
+    private Command moveToOriginal() {
+        PathChain move = follower().pathBuilder()
+                    .addPath(new BezierLine(endPose, endendPose))
+                    .setLinearHeadingInterpolation(endPose.getHeading(), endendPose.getHeading())
+                .build();
+        return new FollowPath(move, true, 0.4);
     }
 
     private Command autonomousRoutine() {
         follower().setStartingPose(startPose);
         return new SequentialGroup(
-                moveToScore()
+                Shooter.getInstance().startShooter(),
+                moveToScore(),
+                new Delay(1),
+                Intake.getInstance().startIntake,
+                Lift.getInstance().LiftUpDown(),
+                new Delay(1),
+                Spinner.getInstance().startSpinner(),
+                Lift.getInstance().LiftUpDown(),
+                new Delay(1),
+                Spinner.getInstance().stopSpinner(),
+                Lift.getInstance().LiftUpDown(),
+                moveToPick(),
+                moveToPickBalls(),
+                moveToOriginal(),
+                Lift.getInstance().LiftUpDown(),
+                new Delay(1),
+                Spinner.getInstance().startSpinner(),
+                Lift.getInstance().LiftUpDown(),
+                new Delay(1),
+                Spinner.getInstance().stopSpinner(),
+                Lift.getInstance().LiftUpDown()
         );
 
 //        return new SequentialGroup(
