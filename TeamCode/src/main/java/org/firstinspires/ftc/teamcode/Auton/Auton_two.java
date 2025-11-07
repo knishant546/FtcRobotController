@@ -28,15 +28,15 @@ public class Auton_two extends NextFTCOpMode {
     //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
 
     Pose startPoseStraight = new Pose(getUnits(16), getUnits(-40), Math.toRadians(230));
-    Pose adjustPoseToShoot = new Pose(getUnits(72), getUnits(-6), Math.toRadians(210));
+    Pose adjustPoseToShoot = new Pose(getUnits(72), getUnits(-7), Math.toRadians(225));
 
-    Pose moveToPickRow = new Pose(56, -22, Math.toRadians(270));
+    Pose moveToPickRow = new Pose(60, -22, Math.toRadians(270));
 
-    Pose moveToPick2Balls = new Pose(56, -45, Math.toRadians(270));
+    Pose moveToPick2Balls = new Pose(60, -45, Math.toRadians(270));
 
-    Pose moveToPick3rdBall = new Pose(51, -40, Math.toRadians(260));
+    Pose moveToPick3rdBall = new Pose(55, -48, Math.toRadians(260));
 
-    Pose adjustOut = new Pose(56, -45, Math.toRadians(270));
+    Pose adjustOut = new Pose(84, -12, Math.toRadians(270));
 
     private double getUnits(double inches) {
         return inches * 1;
@@ -124,6 +124,7 @@ public class Auton_two extends NextFTCOpMode {
 
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
+        Shooter.getInstance().setShooterPower(-0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
                 moveToShoot(),
