@@ -23,6 +23,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous(name="BlueBack V1.1")
+// @TODO Reset to center posistion
 public class Auton_three extends NextFTCOpMode {
 
     //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
@@ -30,11 +31,11 @@ public class Auton_three extends NextFTCOpMode {
     Pose startPoseStraight = new Pose(getUnits(16), getUnits(-33), Math.toRadians(180));
     Pose adjustPoseToShoot = new Pose(getUnits(62), getUnits(-10), Math.toRadians(220));
 
-    Pose moveToPickRow = new Pose(60, -22, Math.toRadians(270));
+    Pose moveToPickRow = new Pose(64, -22, Math.toRadians(270));
 
-    Pose moveToPick2Balls = new Pose(60, -45, Math.toRadians(270));
+    Pose moveToPick2Balls = new Pose(64, -45, Math.toRadians(270));
 
-    Pose moveToPick3rdBall = new Pose(55, -48, Math.toRadians(260));
+    Pose moveToPick3rdBall = new Pose(59, -48, Math.toRadians(260));
 
     Pose adjustOut = new Pose(84, -12, Math.toRadians(270));
 
@@ -124,6 +125,7 @@ public class Auton_three extends NextFTCOpMode {
 
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
+        follower().setPose(startPoseStraight);
         Shooter.getInstance().setShooterPower(0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),

@@ -25,18 +25,17 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Autonomous(name="BlueFront V1")
 public class Auton_one extends NextFTCOpMode {
 
-    Pose startPoseStraight = new Pose(getUnits(2), getUnits(24), Math.toRadians(0));
-    Pose endPoseStraight = new Pose(getUnits(11), getUnits(7), Math.toRadians(0));
+    Pose startPoseStraight = new Pose(getUnits(10), getUnits(31), Math.toRadians(0));
 
-    Pose adjustPoseToShoot = new Pose(14, 3, Math.toRadians(25));
+    Pose adjustPoseToShoot = new Pose(21, 12, Math.toRadians(20));
 
-    Pose moveToPickRow = new Pose(30, 22, Math.toRadians(90));
+    Pose moveToPickRow = new Pose(38, 29, Math.toRadians(90));
 
-    Pose moveToPick2Balls = new Pose(30, 45, Math.toRadians(90));
+    Pose moveToPick2Balls = new Pose(38, 52, Math.toRadians(90));
 
-    Pose moveToPick3rdBall = new Pose(35, 55, Math.toRadians(80));
+    Pose moveToPick3rdBall = new Pose(43, 62, Math.toRadians(80));
 
-    Pose adjustOut = new Pose(25, 3, Math.toRadians(25));
+    Pose adjustOut = new Pose(33, 12, Math.toRadians(25));
 
     private double getUnits(double inches) {
         return inches * 1;
@@ -57,10 +56,8 @@ public class Auton_one extends NextFTCOpMode {
 
     private Command moveToShoot() {
         PathChain move = follower().pathBuilder()
-                .addPath(new BezierLine(startPoseStraight, endPoseStraight))
-                .setLinearHeadingInterpolation(startPoseStraight.getHeading(), endPoseStraight.getHeading())
-                .addPath(new BezierLine(endPoseStraight, adjustPoseToShoot))
-                .setLinearHeadingInterpolation(endPoseStraight.getHeading(), adjustPoseToShoot.getHeading())
+                .addPath(new BezierLine(startPoseStraight, adjustPoseToShoot))
+                .setLinearHeadingInterpolation(startPoseStraight.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
         return new FollowPath(move, true, 0.7);
     }
@@ -86,8 +83,8 @@ public class Auton_one extends NextFTCOpMode {
 
     private Command moveToOriginal() {
         PathChain move = follower().pathBuilder()
-                .addPath(new BezierLine(endPoseStraight, adjustPoseToShoot))
-                .setLinearHeadingInterpolation(endPoseStraight.getHeading(), adjustPoseToShoot.getHeading())
+                .addPath(new BezierLine(moveToPick3rdBall, adjustPoseToShoot))
+                .setLinearHeadingInterpolation(moveToPick3rdBall.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
         return new FollowPath(move, true, 0.7);
     }
@@ -126,6 +123,7 @@ public class Auton_one extends NextFTCOpMode {
 
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
+        follower().setPose(startPoseStraight);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
                 moveToShoot(),

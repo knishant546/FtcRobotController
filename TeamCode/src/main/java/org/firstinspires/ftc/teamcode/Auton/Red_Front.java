@@ -29,7 +29,7 @@ public class Red_Front extends NextFTCOpMode {
     Pose startPoseStraight = new Pose(getUnits(10), getUnits(-31), Math.toRadians(0));
     //Pose endPoseStraight = new Pose(getUnits(19), getUnits(-14), Math.toRadians(0));
 
-    Pose adjustPoseToShoot = new Pose(19, -14, Math.toRadians(335));
+    Pose adjustPoseToShoot = new Pose(19, -14, Math.toRadians(340));
 
     Pose moveToPickRow = new Pose(38, -29, Math.toRadians(270));
 
@@ -37,7 +37,7 @@ public class Red_Front extends NextFTCOpMode {
 
     Pose moveToPick3rdBall = new Pose(43, -62, Math.toRadians(280));
 
-    Pose adjustOut = new Pose(33, -10, Math.toRadians(335));
+    Pose adjustOut = new Pose(33, -12, Math.toRadians(335));
 
     private double getUnits(double inches) {
         return inches * 1;
