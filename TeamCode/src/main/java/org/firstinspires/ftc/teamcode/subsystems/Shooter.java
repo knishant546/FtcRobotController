@@ -28,6 +28,7 @@ public class Shooter implements Subsystem {
 
     @Override
     public void initialize() {
+        this.pow = 1.0;
         this.stopShooter().schedule();
     }
 

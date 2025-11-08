@@ -30,15 +30,21 @@ public class Utils {
      */
     public static String getColorName(float[] rgba) {
         float threshold = 0.2f;
+        float redthreshold = 0.150f;
+        float greenthreshold = 0.250f;
+        float bluethreshold = 0.250f;
         if(rgba[0] > threshold && rgba[1] > threshold && rgba[2] > threshold) {
             return "Nothing";
         } else if (rgba[2] > rgba[0] && rgba[2] > rgba[1]) {
             return "Purple";
         } else if (rgba[1] > threshold && rgba[0] <= threshold && rgba[2] <= threshold) {
             return "Green";
+        } else {
+            if (rgba[0] >redthreshold && rgba[1] > greenthreshold && rgba[2] > bluethreshold) {
+                return "Nothing";
+            }
         }
-
-        return "Nothing";
+        return "Unknown";
     }
 
 }
