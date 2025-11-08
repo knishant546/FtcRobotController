@@ -61,6 +61,7 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
         String color = Utils.getColorName(rgba);
 
         telemetry.addData("Color Detected:", color);
+        telemetry.addData("Shooter Power Variable :",Shooter.getInstance().getShootPower());
         telemetry.addData("Spinner Power",
                 Spinner.getInstance().getSpinnerPower());
         telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
@@ -78,6 +79,7 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
 
         telemetry.update();
     }
+
 
 
     @Override
@@ -101,6 +103,12 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
 
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(Lift.getInstance().liftDown());
+
+        Gamepads.gamepad2().dpadUp()
+                .whenBecomesTrue(Shooter.getInstance().increasePower);
+        Gamepads.gamepad2().dpadDown()
+                .whenBecomesTrue(Shooter.getInstance().decreasePower);
+
 
         Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(Spinner.getInstance().startSpinner());

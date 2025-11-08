@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.RunToState;
 import dev.nextftc.hardware.controllable.RunToVelocity;
@@ -39,9 +40,35 @@ public class Shooter implements Subsystem {
         this.pow = pow;
     }
 
+    public double getShootPower(){
+        return this.pow;
+    }
+
     public Command startShooter() {
         return new SetPower(shootermotor,pow);
     }
+
+    public Command increasePower = new InstantCommand(()->{
+        double shooterPow = Shooter.getInstance().getShootPower();
+        if(shooterPow != 1.0) {
+            //shooter is not running
+            Shooter.getInstance().setShooterPower(1.0);
+        }
+
+        Shooter.getInstance().startShooter().schedule();
+    }).requires(this);
+
+    public Command decreasePower = new InstantCommand(()->{
+        double shooterPow = Shooter.getInstance().getShootPower();
+        if(shooterPow != 0.8) {
+            //shooter is not running
+            Shooter.getInstance().setShooterPower(0.8);
+        }
+
+        Shooter.getInstance().startShooter().schedule();
+    }).requires(this);
+
+
 
     public Command stopShooter() {
         return new SetPower(shootermotor,0.0);
