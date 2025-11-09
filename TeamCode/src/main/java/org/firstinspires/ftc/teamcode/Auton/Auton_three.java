@@ -35,7 +35,7 @@ public class Auton_three extends NextFTCOpMode {
 
     Pose moveToPick2Balls = new Pose(64, -45, Math.toRadians(270));
 
-    Pose moveToPick3rdBall = new Pose(59, -48, Math.toRadians(260));
+    //Pose moveToPick3rdBall = new Pose(59, -45, Math.toRadians(260));
 
     Pose adjustOut = new Pose(84, -12, Math.toRadians(270));
 
@@ -76,8 +76,8 @@ public class Auton_three extends NextFTCOpMode {
         PathChain move = follower().pathBuilder()
                 .addPath(new BezierLine(moveToPickRow, moveToPick2Balls))
                 .setLinearHeadingInterpolation(moveToPickRow.getHeading(), moveToPick2Balls.getHeading())
-                .addPath(new BezierLine(moveToPick2Balls, moveToPick3rdBall))
-                .setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), moveToPick3rdBall.getHeading())
+                //.addPath(new BezierLine(moveToPick2Balls, moveToPick3rdBall))
+                //.setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), moveToPick3rdBall.getHeading())
                 .build();
         return new FollowPath(move, true, 0.25);
 
@@ -85,8 +85,8 @@ public class Auton_three extends NextFTCOpMode {
 
     private Command moveToOriginal() {
         PathChain move = follower().pathBuilder()
-                .addPath(new BezierLine(moveToPick3rdBall, adjustPoseToShoot))
-                .setLinearHeadingInterpolation(moveToPick3rdBall.getHeading(), adjustPoseToShoot.getHeading())
+                .addPath(new BezierLine(moveToPick2Balls, adjustPoseToShoot))
+                .setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
         return new FollowPath(move, true, 0.7);
     }

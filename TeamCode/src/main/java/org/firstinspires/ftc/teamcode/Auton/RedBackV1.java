@@ -8,7 +8,6 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -23,27 +22,28 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="RedFront V1")
-public class Red_Front extends NextFTCOpMode {
+@Autonomous(name="RedBack V1")
+// @TODO Reset to center posistion
+public class RedBackV1 extends NextFTCOpMode {
 
-    Pose startPoseStraight = new Pose(getUnits(10), getUnits(-31), Math.toRadians(0));
-    //Pose endPoseStraight = new Pose(getUnits(19), getUnits(-14), Math.toRadians(0));
+    //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
 
-    Pose adjustPoseToShoot = new Pose(19, -14, Math.toRadians(330));
+    Pose startPoseStraight = new Pose(getUnits(16), getUnits(33), Math.toRadians(180));
+    Pose adjustPoseToShoot = new Pose(getUnits(62), getUnits(10), Math.toRadians(140));
 
-    Pose moveToPickRow = new Pose(38, -29, Math.toRadians(270));
+    Pose moveToPickRow = new Pose(64, 22, Math.toRadians(90));
 
-    Pose moveToPick2Balls = new Pose(38, -52, Math.toRadians(270));
+    Pose moveToPick2Balls = new Pose(64, 45, Math.toRadians(90));
 
-    Pose moveToPick3rdBall = new Pose(43, -62, Math.toRadians(280));
+    //Pose moveToPick3rdBall = new Pose(59, -45, Math.toRadians(260));
 
-    Pose adjustOut = new Pose(33, -12, Math.toRadians(335));
+    Pose adjustOut = new Pose(84, 12, Math.toRadians(90));
 
     private double getUnits(double inches) {
         return inches * 1;
     }
 
-    public Red_Front() {
+    public RedBackV1() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -60,8 +60,6 @@ public class Red_Front extends NextFTCOpMode {
         PathChain move = follower().pathBuilder()
                 .addPath(new BezierLine(startPoseStraight, adjustPoseToShoot))
                 .setLinearHeadingInterpolation(startPoseStraight.getHeading(), adjustPoseToShoot.getHeading())
-                //.addPath(new BezierLine(endPoseStraight, adjustPoseToShoot))
-                //.setLinearHeadingInterpolation(endPoseStraight.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
         return new FollowPath(move, true, 0.7);
     }
@@ -78,8 +76,8 @@ public class Red_Front extends NextFTCOpMode {
         PathChain move = follower().pathBuilder()
                 .addPath(new BezierLine(moveToPickRow, moveToPick2Balls))
                 .setLinearHeadingInterpolation(moveToPickRow.getHeading(), moveToPick2Balls.getHeading())
-                .addPath(new BezierLine(moveToPick2Balls, moveToPick3rdBall))
-                .setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), moveToPick3rdBall.getHeading())
+                //.addPath(new BezierLine(moveToPick2Balls, moveToPick3rdBall))
+                //.setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), moveToPick3rdBall.getHeading())
                 .build();
         return new FollowPath(move, true, 0.25);
 
@@ -87,8 +85,8 @@ public class Red_Front extends NextFTCOpMode {
 
     private Command moveToOriginal() {
         PathChain move = follower().pathBuilder()
-                .addPath(new BezierLine(moveToPick3rdBall, adjustPoseToShoot))
-                .setLinearHeadingInterpolation(moveToPick3rdBall.getHeading(), adjustPoseToShoot.getHeading())
+                .addPath(new BezierLine(moveToPick2Balls, adjustPoseToShoot))
+                .setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
         return new FollowPath(move, true, 0.7);
     }
@@ -128,6 +126,7 @@ public class Red_Front extends NextFTCOpMode {
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
+        Shooter.getInstance().setShooterPower(0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
                 moveToShoot(),

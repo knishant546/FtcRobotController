@@ -16,7 +16,7 @@ public class Spinner implements Subsystem {
     //TODO will change this name to pickMotor
     private MotorEx spinnerMotor = new MotorEx("spinner");
 
-    private double pow = -0.6;
+    private double pow = -0.65;
 
     private Spinner() {
     }

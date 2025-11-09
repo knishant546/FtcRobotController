@@ -39,11 +39,8 @@ public class Utils {
             return "Purple";
         } else if (rgba[1] > threshold && rgba[0] <= threshold && rgba[2] <= threshold) {
             return "Green";
-        } else {
-            if (rgba[0] >redthreshold && rgba[1] > greenthreshold && rgba[2] > bluethreshold) {
-                return "Nothing";
-            }
         }
+
         return "Unknown";
     }
 
