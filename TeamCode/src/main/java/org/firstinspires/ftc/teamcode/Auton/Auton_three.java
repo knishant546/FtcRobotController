@@ -28,16 +28,18 @@ public class Auton_three extends NextFTCOpMode {
 
     //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
 
-    Pose startPoseStraight = new Pose(getUnits(16), getUnits(-33), Math.toRadians(180));
-    Pose adjustPoseToShoot = new Pose(getUnits(62), getUnits(-10), Math.toRadians(220));
+    Pose startPoseStraight = new Pose(getUnits(10), getUnits(-42.5), Math.toRadians(180));
+    Pose adjustPoseToShoot = new Pose(getUnits(57), getUnits(-15.5), Math.toRadians(220));
 
-    Pose moveToPickRow = new Pose(64, -22, Math.toRadians(270));
+    Pose moveToPickRow = new Pose(60, -24, Math.toRadians(270));
 
-    Pose moveToPick2Balls = new Pose(64, -45, Math.toRadians(270));
+    Pose moveToPick2Balls = new Pose(60, -56, Math.toRadians(270));
 
     //Pose moveToPick3rdBall = new Pose(59, -45, Math.toRadians(260));
 
     Pose adjustOut = new Pose(84, -12, Math.toRadians(270));
+
+    private double maxPower = 0.9;
 
     private double getUnits(double inches) {
         return inches * 1;
@@ -54,6 +56,7 @@ public class Auton_three extends NextFTCOpMode {
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE
         );
+
     }
 
     private Command moveToShoot() {
@@ -61,7 +64,7 @@ public class Auton_three extends NextFTCOpMode {
                 .addPath(new BezierLine(startPoseStraight, adjustPoseToShoot))
                 .setLinearHeadingInterpolation(startPoseStraight.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
-        return new FollowPath(move, true, 0.7);
+        return new FollowPath(move, true, this.maxPower);
     }
 
     private Command moveToPickRowOne() {
@@ -69,7 +72,7 @@ public class Auton_three extends NextFTCOpMode {
                 .addPath(new BezierLine(adjustPoseToShoot, moveToPickRow))
                 .setLinearHeadingInterpolation(adjustPoseToShoot.getHeading(), moveToPickRow.getHeading())
                 .build();
-        return new FollowPath(move, true, 0.7);
+        return new FollowPath(move, true, this.maxPower);
     }
 
     private Command moveToPickBalls() {
@@ -78,8 +81,9 @@ public class Auton_three extends NextFTCOpMode {
                 .setLinearHeadingInterpolation(moveToPickRow.getHeading(), moveToPick2Balls.getHeading())
                 //.addPath(new BezierLine(moveToPick2Balls, moveToPick3rdBall))
                 //.setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), moveToPick3rdBall.getHeading())
+               // .setTimeoutConstraint(5000)
                 .build();
-        return new FollowPath(move, true, 0.25);
+        return new FollowPath(move, true, 0.5);
 
     }
 
@@ -88,7 +92,7 @@ public class Auton_three extends NextFTCOpMode {
                 .addPath(new BezierLine(moveToPick2Balls, adjustPoseToShoot))
                 .setLinearHeadingInterpolation(moveToPick2Balls.getHeading(), adjustPoseToShoot.getHeading())
                 .build();
-        return new FollowPath(move, true, 0.7);
+        return new FollowPath(move, true, this.maxPower);
     }
 
     private Command moveOut() {
@@ -96,18 +100,16 @@ public class Auton_three extends NextFTCOpMode {
                 .addPath(new BezierLine(adjustPoseToShoot, adjustOut))
                 .setLinearHeadingInterpolation(adjustPoseToShoot.getHeading(), adjustOut.getHeading())
                 .build();
-        return new FollowPath(move, true, 0.7);
+        return new FollowPath(move, true, this.maxPower);
     }
 
     private Command shoot() {
         return Intake.getInstance().startIntake
-                .then(Lift.getInstance().LiftUpDown())
-                .then(new Delay(1))
                 .then(Spinner.getInstance().startSpinner())
                 .then(Lift.getInstance().LiftUpDown())
-                .then(new Delay(1))
-                .then(Spinner.getInstance().stopSpinner())
-                .then(Lift.getInstance().LiftUpDown());
+                .then(new Delay(0.5))
+                .then(Lift.getInstance().LiftUpDown())
+                .then(Spinner.getInstance().stopSpinner());
     }
 
     private Command stopAll() {
@@ -127,10 +129,10 @@ public class Auton_three extends NextFTCOpMode {
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
         Shooter.getInstance().setShooterPower(0.8);
+        Spinner.getInstance().setPower(-0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
                 moveToShoot(),
-                new Delay(1.0),
                 shoot(),
                 moveToPickRowOne(),
                 moveToPickBalls(),
