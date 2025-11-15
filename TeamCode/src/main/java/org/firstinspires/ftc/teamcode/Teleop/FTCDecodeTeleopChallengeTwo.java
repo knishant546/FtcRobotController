@@ -38,7 +38,7 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
     public void onInit() {
         //Set up the colorSensor
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
-        colorSensor.setGain(10);
+        colorSensor.setGain(20);
         Lift.getInstance().initialize();
         Spinner.getInstance().initialize();
         Shooter.getInstance().initialize();
@@ -58,7 +58,7 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
     public void onUpdate() {
 
         float[] rgba = Utils.getRGBA(colorSensor);
-        String color = Utils.getColorName(rgba);
+        String color = Utils.detectColorName(rgba);
 
         telemetry.addData("Color Detected:", color);
         telemetry.addData("Shooter Power Variable :",Shooter.getInstance().getShootPower());

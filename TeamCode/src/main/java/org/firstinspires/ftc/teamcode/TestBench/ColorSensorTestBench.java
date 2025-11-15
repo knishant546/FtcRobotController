@@ -29,7 +29,7 @@ public class ColorSensorTestBench extends NextFTCOpMode {
     @Override
     public void onInit() {
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
-        colorSensor.setGain(10);
+        colorSensor.setGain(20);
 
         printCurrentRGBA();
     }
@@ -42,15 +42,16 @@ public class ColorSensorTestBench extends NextFTCOpMode {
         telemetry.addData("Green", rgba[1]);
         telemetry.addData("Blue", rgba[2]);
         telemetry.addData("Alpha", rgba[3]);
-        telemetry.update();
+        //telemetry.update();
     }
 
     @Override
     public void onUpdate() {
-        //printCurrentRGBA();
+        printCurrentRGBA();
         //detect color and print the name
         float[] rgba = Utils.getRGBA(colorSensor);
-        String color = Utils.getColorName(rgba);
+        //String color = Utils.getColorName(rgba);
+        String color = Utils.detectColorName(rgba);
 
         telemetry.addData("Color Detected:", color);
         telemetry.update();
