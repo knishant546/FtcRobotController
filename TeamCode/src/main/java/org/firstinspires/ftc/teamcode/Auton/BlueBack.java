@@ -6,7 +6,10 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -16,28 +19,33 @@ import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="BlueBack V1.1")
+@Autonomous(name="BlueBack V2.1")
 // @TODO Reset to center posistion
-public class Auton_three extends NextFTCOpMode {
+public class BlueBack extends NextFTCOpMode {
 
     //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
 
-    Pose startPoseStraight = new Pose(getUnits(10), getUnits(-42.5), Math.toRadians(180));
-    Pose adjustPoseToShoot = new Pose(getUnits(57), getUnits(-15.5), Math.toRadians(220));
+    Pose startPoseStraight = new Pose(getUnits(1.5), getUnits(-32.4), Math.toRadians(180));
+    Pose adjustPoseToShoot = new Pose(getUnits(46), getUnits(-9), Math.toRadians(220));
 
-    Pose moveToPickRow = new Pose(60, -24, Math.toRadians(270));
+    Pose moveToPickRow = new Pose(50, -15, Math.toRadians(270));
 
-    Pose moveToPick2Balls = new Pose(60, -56, Math.toRadians(270));
+    Pose moveToPick2Balls = new Pose(50, -44, Math.toRadians(270));
+
+    Pose moveToPickSecondRow = new Pose(73, -17, Math.toRadians(270));
+
+    Pose moveToPick2SecondBalls = new Pose(73, -52, Math.toRadians(270));
 
     //Pose moveToPick3rdBall = new Pose(59, -45, Math.toRadians(260));
 
-    Pose adjustOut = new Pose(84, -12, Math.toRadians(270));
+    Pose adjustOut = new Pose(63, -12, Math.toRadians(270));
 
     private double maxPower = 0.9;
 
@@ -45,7 +53,10 @@ public class Auton_three extends NextFTCOpMode {
         return inches * 1;
     }
 
-    public Auton_three() {
+    private NormalizedColorSensor colorSensor;
+    private VoltageSensor batteryVoltageSensor;
+
+    public BlueBack() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -66,6 +77,39 @@ public class Auton_three extends NextFTCOpMode {
                 .build();
         return new FollowPath(move, true, this.maxPower);
     }
+
+    private Command moveToPickSecondRow() {
+        PathChain move = follower().pathBuilder()
+                .addPath(new BezierLine(adjustPoseToShoot, moveToPickSecondRow))
+                .setLinearHeadingInterpolation(adjustPoseToShoot.getHeading(), moveToPickSecondRow.getHeading())
+                .build();
+        return new FollowPath(move, true, this.maxPower);
+    }
+
+    private Command moveToPick2SecondRow() {
+        PathChain move = follower().pathBuilder()
+                .addPath(new BezierLine(moveToPickSecondRow, moveToPick2SecondBalls))
+                .setLinearHeadingInterpolation(moveToPickSecondRow.getHeading(), moveToPick2SecondBalls.getHeading())
+                .build();
+        return new FollowPath(move, true, 0.5);
+    }
+
+    private Command moveBackSecondRow() {
+        PathChain move = follower().pathBuilder()
+                .addPath(new BezierLine(moveToPick2SecondBalls, moveToPickSecondRow))
+                .setLinearHeadingInterpolation(moveToPick2SecondBalls.getHeading(), moveToPickSecondRow.getHeading())
+                .build();
+        return new FollowPath(move, true, this.maxPower);
+    }
+
+    private Command moveToOriginalTwo() {
+        PathChain move = follower().pathBuilder()
+                .addPath(new BezierLine(moveToPickSecondRow, adjustPoseToShoot))
+                .setLinearHeadingInterpolation(moveToPickSecondRow.getHeading(), adjustPoseToShoot.getHeading())
+                .build();
+        return new FollowPath(move, true, this.maxPower);
+    }
+
 
     private Command moveToPickRowOne() {
         PathChain move = follower().pathBuilder()
@@ -101,12 +145,12 @@ public class Auton_three extends NextFTCOpMode {
     }
 
     private Command shoot() {
-        return Intake.getInstance().startIntake
-                .then(Spinner.getInstance().startSpinner())
-                .then(Lift.getInstance().LiftUpDown())
+        return Lift.getInstance().LiftUpDown()
+                .then(Intake.getInstance().startIntake)
                 .then(new Delay(0.5))
-                .then(Lift.getInstance().LiftUpDown())
-                .then(Spinner.getInstance().stopSpinner());
+                .then(Lift.getInstance().LiftUpDown()
+                .then(new Delay(0.5))
+                .then(Lift.getInstance().LiftUpDown()));
     }
 
     private Command stopAll() {
@@ -125,15 +169,25 @@ public class Auton_three extends NextFTCOpMode {
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
-        Shooter.getInstance().setShooterPower(0.8);
+        Shooter.getInstance().setShooterPower(0.85);
         Spinner.getInstance().setPower(-0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
                 moveToShoot(),
                 shoot(),
+                Shooter.getInstance().stopShooter(),
                 moveToPickRowOne(),
                 moveToPickBalls(),
+                Intake.getInstance().stopIntake,
+                Shooter.getInstance().startShooter(),
                 moveToOriginal(),
+                shoot(),
+                moveToPickSecondRow(),
+                moveToPick2SecondRow(),
+                Intake.getInstance().stopIntake,
+                moveBackSecondRow(),
+                Shooter.getInstance().startShooter(),
+                moveToOriginalTwo(),
                 shoot(),
                 stopAll(),
                 moveOut()
@@ -160,19 +214,41 @@ public class Auton_three extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
+        colorSensor.setGain(20);
+        batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
         Intake.getInstance().initialize();
         Spinner.getInstance().initialize();
         Lift.getInstance().initialize();
         Shooter.getInstance().initialize();
     }
 
+    private Command onColorDetectedBegin = new InstantCommand(() -> {
+        //  Spinner.getInstance().setPower(0.1);
+        Spinner.getInstance().stopSpinner().schedule();
+    }).requires(this);
+
     @Override
     public void onUpdate() {
         follower().update();
+        double voltage = batteryVoltageSensor.getVoltage();
+        telemetry.addData("Battery Voltage", "%.2f V", voltage);
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", follower().getPose().getHeading());
         telemetry.update();
+        float[] rgba = Utils.getRGBA(colorSensor);
+        String color = Utils.detectColorName(rgba);
+        if(!color.equals("Nothing")) {
+            telemetry.addData("Object Detected", "By Sensor");
+            onColorDetectedBegin.requires(this).schedule();
+            telemetry.addData("scheduled seq grp", "By Jan");
+            telemetry.addData("Spinner", "Stopped");
+        }
+        else {
+            Spinner.getInstance().setPower(-0.8);
+            Spinner.getInstance().startSpinner().schedule();
+        }
     }
 
     @Override

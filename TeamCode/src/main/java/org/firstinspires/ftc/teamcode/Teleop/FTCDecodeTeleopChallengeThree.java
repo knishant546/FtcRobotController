@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
@@ -24,6 +25,8 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 public class FTCDecodeTeleopChallengeThree extends NextFTCOpMode {
     private NormalizedColorSensor colorSensor;
 
+    private VoltageSensor batteryVoltageSensor;
+
     boolean ignoreColor = false;
 
     public FTCDecodeTeleopChallengeThree() {
@@ -41,6 +44,7 @@ public class FTCDecodeTeleopChallengeThree extends NextFTCOpMode {
     public void onInit() {
         //Set up the colorSensor
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
+        batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
         colorSensor.setGain(20);
         Lift.getInstance().initialize();
         Spinner.getInstance().initialize();
@@ -49,6 +53,7 @@ public class FTCDecodeTeleopChallengeThree extends NextFTCOpMode {
     }
 
     private Command onColorDetectedBegin = new InstantCommand(() -> {
+      //  Spinner.getInstance().setPower(0.1);
         new Delay(0.4).then(
                 Spinner.getInstance().stopSpinner()).schedule();
     }).requires(this);
@@ -61,8 +66,11 @@ public class FTCDecodeTeleopChallengeThree extends NextFTCOpMode {
     public void onUpdate() {
 
         float[] rgba = Utils.getRGBA(colorSensor);
-        String color = Utils.detectColorName(rgba);
 
+        // Get the current voltage
+        double voltage = batteryVoltageSensor.getVoltage();
+        String color = Utils.detectColorName(rgba);
+        telemetry.addData("Battery Voltage", "%.2f V", voltage);
         telemetry.addData("Color Detected:", color);
         telemetry.addData("r", rgba[0]);
         telemetry.addData("g", rgba[1]);
@@ -81,6 +89,7 @@ public class FTCDecodeTeleopChallengeThree extends NextFTCOpMode {
             telemetry.addData("Spinner", "Stopped");
         }
         else {
+            Spinner.getInstance().setPower(-0.8);
             Spinner.getInstance().startSpinner().schedule();
         }
 
