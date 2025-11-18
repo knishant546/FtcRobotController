@@ -54,7 +54,11 @@ public class Utils {
      */
     public static String detectColorName(float[] rgba) {
 
-        if(rgba[0] >= 0.3 && rgba[1] >= 0.6 && rgba[2] >= 0.5) {
+     /*   if(rgba[0] >= 0.3 && rgba[1] >= 0.6 && rgba[2] >= 0.5) {
+            return "Nothing";
+        }*/
+        // if Alpha is less .1 then there is no close object to reflect the light.
+        if (rgba[3] <= 0.099) {
             return "Nothing";
         }
         return "Something";
