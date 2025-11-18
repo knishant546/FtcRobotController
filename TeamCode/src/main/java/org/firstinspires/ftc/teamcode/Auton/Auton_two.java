@@ -124,7 +124,7 @@ public class Auton_two extends NextFTCOpMode {
 
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
-        Shooter.getInstance().setShooterPower(0.8);
+        Shooter.getInstance().setShooterPowerFactor(0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
                 moveToShoot(),

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
@@ -19,11 +20,14 @@ import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@TeleOp(name="FTCDecodeTeleopChallengeTwo")
-public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
-    private NormalizedColorSensor colorSensor;
+@TeleOp(name="FTCDecodeTeleopChallengeFour")
+public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
 
-    public FTCDecodeTeleopChallengeTwo() {
+    private VoltageSensor batteryVoltageSensor;
+
+    boolean ignoreColor = false;
+
+    public FTCDecodeTeleopChallengeFour() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -37,18 +41,18 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
     @Override
     public void onInit() {
         //Set up the colorSensor
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
+        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
         colorSensor.setGain(20);
+        Spinner.getInstance().setColorSensor(colorSensor);
         Lift.getInstance().initialize();
         Spinner.getInstance().initialize();
         Shooter.getInstance().initialize();
         Intake.getInstance().initialize();
     }
 
-    private Command onColorDetectedBegin = new InstantCommand(() -> {
-        new Delay(0.4).then(
-                Spinner.getInstance().stopSpinner()).schedule();
-    }).requires(this);
+
 
     private Command onLifted = new InstantCommand( () -> {
         Lift.getInstance().LiftUpDown().then(Spinner.getInstance().startSpinner()).schedule();
@@ -57,28 +61,29 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
     @Override
     public void onUpdate() {
 
-        float[] rgba = Utils.getRGBA(colorSensor);
-        String color = Utils.detectColorName(rgba);
-
-        telemetry.addData("Color Detected:", color);
+        // Get the current voltage
+        double voltage = batteryVoltageSensor.getVoltage();
+        telemetry.addData("Battery Voltage", "%.2f V", voltage);
         telemetry.addData("Shooter Power Variable :",Shooter.getInstance().getShooterPowerFactor());
         telemetry.addData("Spinner Power",
                 Spinner.getInstance().getSpinnerPower());
         telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
-
-
-        if(!color.equals("Nothing") ) {
-            telemetry.addData("Object Detected", "By Sensor");
-            onColorDetectedBegin.thenWait(0.2).requires(this).schedule();
-            telemetry.addData("scheduled seq grp", "By Jan");
-            telemetry.addData("Spinner", "Stopped");
-        }
-        else {
-            Spinner.getInstance().startSpinner().schedule();
-        }
-
         telemetry.update();
     }
+
+    private Command manualIntake = new InstantCommand(()->{
+
+        ignoreColor = true;
+
+        Spinner.getInstance().startSpinner().schedule();
+
+    }).requires(ignoreColor);
+
+    private Command stopmanualIntake = new InstantCommand(()->{
+        ignoreColor = false;
+        Spinner.getInstance().stopSpinner().schedule();
+
+    }).requires(ignoreColor);
 
 
 
@@ -91,6 +96,11 @@ public class FTCDecodeTeleopChallengeTwo extends NextFTCOpMode {
                 .whenBecomesTrue(Intake.getInstance().startIntake);
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Intake.getInstance().stopIntake);
+
+        Gamepads.gamepad1().y()
+                .whenBecomesTrue(manualIntake)
+                .whenBecomesFalse(stopmanualIntake);
+
 
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(Shooter.getInstance().startShooter());

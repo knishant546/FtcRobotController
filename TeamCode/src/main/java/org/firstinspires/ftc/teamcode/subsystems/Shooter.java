@@ -1,19 +1,32 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.hardware.controllable.RunToState;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
-
-import dev.nextftc.hardware.powerable.SetPower;
 
 public class Shooter implements Subsystem {
 
     private static final Shooter INSTANCE = new Shooter();
+    public static PIDCoefficients pidCoefficients = new PIDCoefficients(0.0003, 0, 0);
+
+    private  double powerFactor = 1;
+
+    private static final ControlSystem controlSystem  = ControlSystem.builder()
+            .velPid(pidCoefficients)
+            .basicFF(0)
+            .build();
+
+    private static double max_goal = 6000;
+
+
     public static Shooter getInstance() {
         return INSTANCE;
     }
@@ -21,73 +34,61 @@ public class Shooter implements Subsystem {
     //TODO will change this name to pickMotor
     private MotorEx shootermotor = new MotorEx("shooter");
 
-    private double pow = 1.0;
+
+    private double velo;
 
     private Shooter() {
     }
 
     @Override
     public void initialize() {
-        this.pow = 1.0;
+        shootermotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        controlSystem.setGoal(new KineticState());
         this.stopShooter().schedule();
     }
 
+    @Override
+    public void periodic() {
+        double powerTarget = controlSystem.calculate(shootermotor.getState());
+        ActiveOpMode.telemetry().addData("motor power set to: ", powerTarget);
+        shootermotor.setPower(powerTarget);
+        ActiveOpMode.telemetry().addData("Motor velocity :",shootermotor.getVelocity());
+        ActiveOpMode.telemetry().addData("Raw velocity",shootermotor.getRawTicks());
+    }
 
     public float getShooterPower() {
         return (float) shootermotor.getPower();
     }
 
-    public void setShooterPower(double pow) {
-        this.pow = pow;
+    public void setShooterPowerFactor(double powerFactor) {
+        this.powerFactor = powerFactor;
     }
 
-    public double getShootPower(){
-        return this.pow;
+    public double getShooterPowerFactor(){
+        return this.powerFactor;
     }
 
     public Command startShooter() {
-        return new SetPower(shootermotor,pow);
+         return new InstantCommand(() -> {
+             new RunToVelocity(controlSystem, max_goal * powerFactor).requires(this).schedule();
+         }).requires(this);
     }
 
     public Command increasePower = new InstantCommand(()->{
-        double shooterPow = Shooter.getInstance().getShootPower();
-        if(shooterPow != 1.0) {
-            //shooter is not running
-            Shooter.getInstance().setShooterPower(1.0);
-        }
-
-        Shooter.getInstance().startShooter().schedule();
+            setShooterPowerFactor(1.0);
+            startShooter().schedule();
     }).requires(this);
 
     public Command decreasePower = new InstantCommand(()->{
-        double shooterPow = Shooter.getInstance().getShootPower();
-        if(shooterPow != 0.8) {
-            //shooter is not running
-            Shooter.getInstance().setShooterPower(0.8);
-        }
-
-        Shooter.getInstance().startShooter().schedule();
+            setShooterPowerFactor(0.8);
+            startShooter().schedule();
     }).requires(this);
 
 
 
     public Command stopShooter() {
-        return new SetPower(shootermotor,0.0);
+        return new InstantCommand(() -> {
+            new RunToVelocity(controlSystem, 0).requires(this).schedule();
+        }).requires(this);
     }
-
-    /*
-    private final ControlSystem controller = ControlSystem.builder()
-            .velPid(0.005, 0, 0)
-            .basicFF(0.01, 0.02, 0.03)
-            .build();
-
-    public final Command off = new RunToVelocity(controller, 0.0).requires(this);
-    public final Command on = new RunToVelocity(controller, 500.0).requires(this);
-
-    @Override
-    public void periodic() {
-        shootermotor.setPower(controller.calculate(shootermotor.getState()));
-    }
-
-     */
 }

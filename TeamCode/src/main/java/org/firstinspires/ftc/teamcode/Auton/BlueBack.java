@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -19,7 +18,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -27,13 +25,11 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous(name="BlueBack V2.1")
-// @TODO Reset to center posistion
+// @TODO Reset to center position
 public class BlueBack extends NextFTCOpMode {
 
-    //Pose initPose = new Pose(getUnits(16), getUnits(-41), Math.toRadians(230));
-
-    Pose startPoseStraight = new Pose(getUnits(1.5), getUnits(-32.4), Math.toRadians(180));
-    Pose adjustPoseToShoot = new Pose(getUnits(46), getUnits(-9), Math.toRadians(220));
+    Pose startPoseStraight = new Pose(1.5, -32.4, Math.toRadians(180));
+    Pose adjustPoseToShoot = new Pose(46, -9, Math.toRadians(220));
 
     Pose moveToPickRow = new Pose(50, -15, Math.toRadians(270));
 
@@ -42,18 +38,10 @@ public class BlueBack extends NextFTCOpMode {
     Pose moveToPickSecondRow = new Pose(73, -17, Math.toRadians(270));
 
     Pose moveToPick2SecondBalls = new Pose(73, -52, Math.toRadians(270));
-
-    //Pose moveToPick3rdBall = new Pose(59, -45, Math.toRadians(260));
-
     Pose adjustOut = new Pose(63, -12, Math.toRadians(270));
 
-    private double maxPower = 0.9;
+    private final double maxPower = 0.9;
 
-    private double getUnits(double inches) {
-        return inches * 1;
-    }
-
-    private NormalizedColorSensor colorSensor;
     private VoltageSensor batteryVoltageSensor;
 
     public BlueBack() {
@@ -169,7 +157,7 @@ public class BlueBack extends NextFTCOpMode {
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
-        Shooter.getInstance().setShooterPower(0.85);
+        Shooter.getInstance().setShooterPowerFactor(0.85);
         Spinner.getInstance().setPower(-0.8);
         return new SequentialGroup(
                 Shooter.getInstance().startShooter(),
@@ -192,41 +180,20 @@ public class BlueBack extends NextFTCOpMode {
                 stopAll(),
                 moveOut()
         );
-
-//        return new SequentialGroup(
-//                Intake.getInstance().startIntake,
-//                Shooter.getInstance().startShooter(),
-//                Spinner.getInstance().startSpinner(),
-//                moveToScore(),
-//                //moveToScore(),
-//                Shooter.getInstance().startShooter(),
-//                new Delay(1),
-//                Intake.getInstance().startIntake,
-//                Lift.getInstance().LiftUpDown(),
-//                new Delay(0.5),
-//                Spinner.getInstance().startSpinner(),
-//                Lift.getInstance().LiftUpDown(),
-//                Spinner.getInstance().stopSpinner(),
-//                Lift.getInstance().LiftUpDown()
-//        );
-
     }
 
     @Override
     public void onInit() {
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
-        colorSensor.setGain(20);
         batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
+        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
+        colorSensor.setGain(20);
+        Spinner.getInstance().setColorSensor(colorSensor);
         Intake.getInstance().initialize();
         Spinner.getInstance().initialize();
         Lift.getInstance().initialize();
         Shooter.getInstance().initialize();
     }
 
-    private Command onColorDetectedBegin = new InstantCommand(() -> {
-        //  Spinner.getInstance().setPower(0.1);
-        Spinner.getInstance().stopSpinner().schedule();
-    }).requires(this);
 
     @Override
     public void onUpdate() {
@@ -237,18 +204,6 @@ public class BlueBack extends NextFTCOpMode {
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", follower().getPose().getHeading());
         telemetry.update();
-        float[] rgba = Utils.getRGBA(colorSensor);
-        String color = Utils.detectColorName(rgba);
-        if(!color.equals("Nothing")) {
-            telemetry.addData("Object Detected", "By Sensor");
-            onColorDetectedBegin.requires(this).schedule();
-            telemetry.addData("scheduled seq grp", "By Jan");
-            telemetry.addData("Spinner", "Stopped");
-        }
-        else {
-            Spinner.getInstance().setPower(-0.8);
-            Spinner.getInstance().startSpinner().schedule();
-        }
     }
 
     @Override

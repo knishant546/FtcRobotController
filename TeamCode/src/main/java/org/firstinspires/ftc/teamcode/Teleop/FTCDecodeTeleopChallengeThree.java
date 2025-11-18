@@ -76,7 +76,7 @@ public class FTCDecodeTeleopChallengeThree extends NextFTCOpMode {
         telemetry.addData("g", rgba[1]);
         telemetry.addData("b", rgba[2]);
 
-        telemetry.addData("Shooter Power Variable :",Shooter.getInstance().getShootPower());
+        telemetry.addData("Shooter Power Variable :",Shooter.getInstance().getShooterPowerFactor());
         telemetry.addData("Spinner Power",
                 Spinner.getInstance().getSpinnerPower());
         telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
