@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import dev.nextftc.control.ControlSystem;
@@ -11,20 +12,27 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
 
 public class Shooter implements Subsystem {
 
+    public  double kP = 0.00023;
+    public  double kI = 0.00001;
+    public  double kD = 0.0;
+    public  double kF = 0; // Start tuning here!
+
     private static final Shooter INSTANCE = new Shooter();
-    public static PIDCoefficients pidCoefficients = new PIDCoefficients(0.0003, 0, 0);
+    public  PIDCoefficients pidCoefficients = new PIDCoefficients(kP , kI, kD);
 
     private  double powerFactor = 1;
 
-    private static final ControlSystem controlSystem  = ControlSystem.builder()
+    private  final ControlSystem controlSystem  = ControlSystem.builder()
             .velPid(pidCoefficients)
-            .basicFF(0)
+            .basicFF(kF)
             .build();
 
-    private static double max_goal = 6000;
+
+    private  double max_goal = 2600;
 
 
     public static Shooter getInstance() {
@@ -34,8 +42,6 @@ public class Shooter implements Subsystem {
     //TODO will change this name to pickMotor
     private MotorEx shootermotor = new MotorEx("shooter");
 
-
-    private double velo;
 
     private Shooter() {
     }
@@ -47,13 +53,15 @@ public class Shooter implements Subsystem {
         this.stopShooter().schedule();
     }
 
-    @Override
-    public void periodic() {
+
+
+    private Command givePower(){
         double powerTarget = controlSystem.calculate(shootermotor.getState());
         ActiveOpMode.telemetry().addData("motor power set to: ", powerTarget);
-        shootermotor.setPower(powerTarget);
         ActiveOpMode.telemetry().addData("Motor velocity :",shootermotor.getVelocity());
         ActiveOpMode.telemetry().addData("Raw velocity",shootermotor.getRawTicks());
+      //  shootermotor.setPower(powerTarget);
+        return new SetPower(shootermotor,powerTarget);
     }
 
     public float getShooterPower() {
@@ -70,7 +78,9 @@ public class Shooter implements Subsystem {
 
     public Command startShooter() {
          return new InstantCommand(() -> {
-             new RunToVelocity(controlSystem, max_goal * powerFactor).requires(this).schedule();
+             new RunToVelocity(controlSystem, max_goal * powerFactor).then(givePower()).
+                     requires(this).schedule();
+
          }).requires(this);
     }
 
@@ -88,7 +98,7 @@ public class Shooter implements Subsystem {
 
     public Command stopShooter() {
         return new InstantCommand(() -> {
-            new RunToVelocity(controlSystem, 0).requires(this).schedule();
+            new RunToVelocity(controlSystem, 0).then(givePower()).requires(this).schedule();
         }).requires(this);
     }
 }
