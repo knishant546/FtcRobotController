@@ -19,7 +19,7 @@ public class Shooter implements Subsystem {
     public  double kP = 0.00023;
     public  double kI = 0.00001;
     public  double kD = 0.0;
-    public  double kF = 0; // Start tuning here!
+    public  double kF = 0.00037; // Start tuning here!
 
     private static final Shooter INSTANCE = new Shooter();
     public  PIDCoefficients pidCoefficients = new PIDCoefficients(kP , kI, kD);
