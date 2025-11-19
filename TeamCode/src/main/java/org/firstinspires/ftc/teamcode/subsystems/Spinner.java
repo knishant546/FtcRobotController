@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.teamcode.Utils;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Utils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -17,10 +19,11 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class Spinner implements Subsystem {
 
     private static final Spinner INSTANCE = new Spinner();
-    private AtomicBoolean running =  new AtomicBoolean(false);
     public static Spinner getInstance() {
         return INSTANCE;
     }
+
+    private AtomicBoolean isRunnning = new AtomicBoolean(false);
 
     private NormalizedColorSensor colorSensor;
 
@@ -37,6 +40,7 @@ public class Spinner implements Subsystem {
 
     @Override
     public void initialize() {
+      //  spinnerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.stopSpinner().schedule();
         setPower(-0.65);
     }
@@ -60,14 +64,11 @@ public class Spinner implements Subsystem {
         float[] rgba = Utils.getRGBA(colorSensor);
         String color = Utils.detectColorName(rgba);
         ActiveOpMode.telemetry().addData("Color Detected :",color);
+
         if(color.equals("Nothing")) {
-          //  if (running.compareAndSet(false,true)) {
-                startSpinner().schedule();
-         //   }
+             startSpinner().schedule();
         }else{
-        //    if (running.compareAndSet(true,false)) {
-                stopSpinner().schedule();
-        //    }
+             stopSpinner().schedule();
         }
     }
 
@@ -75,10 +76,12 @@ public class Spinner implements Subsystem {
         this.pow = pow;
     }
     public Command startSpinner() {
+        isRunnning.set(true);
         return new SetPower(spinnerMotor,pow);
     }
 
     public Command stopSpinner() {
+        isRunnning.set(false);
         return new SetPower(spinnerMotor,0.0);
     }
 }
