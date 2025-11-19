@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterNew;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
 import dev.nextftc.core.commands.Command;
@@ -32,7 +34,7 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
                 new SubsystemComponent(
                         Intake.getInstance(),
                         Spinner.getInstance(),
-                        Shooter.getInstance(),
+                        ShooterNew.getInstance(),
                         Lift.getInstance()),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
@@ -46,9 +48,11 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
         batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
         colorSensor.setGain(20);
         Spinner.getInstance().setColorSensor(colorSensor);
+        DcMotor shooter = hardwareMap.get(DcMotor.class, "shooter");
+        ShooterNew.getInstance().setShooterMotor(shooter);
         Lift.getInstance().initialize();
         Spinner.getInstance().initialize();
-        Shooter.getInstance().initialize();
+        ShooterNew.getInstance().initialize();
         Intake.getInstance().initialize();
     }
 
@@ -64,10 +68,10 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
         // Get the current voltage
         double voltage = batteryVoltageSensor.getVoltage();
         telemetry.addData("Battery Voltage", "%.2f V", voltage);
-        telemetry.addData("Shooter Power Variable :",Shooter.getInstance().getShooterPowerFactor());
+        telemetry.addData("Shooter Power Variable :",ShooterNew.getInstance().getShooterPowerFactor());
         telemetry.addData("Spinner Power",
                 Spinner.getInstance().getSpinnerPower());
-        telemetry.addData("Shooter Power", Shooter.getInstance().getShooterPower());
+        telemetry.addData("Shooter Power", ShooterNew.getInstance().getShooterPower());
         telemetry.update();
     }
 
@@ -103,10 +107,10 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
 
 
         Gamepads.gamepad2().y()
-                .whenBecomesTrue(Shooter.getInstance().startShooter());
+                .whenBecomesTrue(ShooterNew.getInstance().startShooter());
 
         Gamepads.gamepad2().a()
-                .whenBecomesTrue(Shooter.getInstance().stopShooter());
+                .whenBecomesTrue(ShooterNew.getInstance().stopShooter());
 
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(this.onLifted);
@@ -115,9 +119,9 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
                 .whenBecomesTrue(Lift.getInstance().liftDown());
 
         Gamepads.gamepad2().dpadUp()
-                .whenBecomesTrue(Shooter.getInstance().increasePower);
+                .whenBecomesTrue(ShooterNew.getInstance().increasePower);
         Gamepads.gamepad2().dpadDown()
-                .whenBecomesTrue(Shooter.getInstance().decreasePower);
+                .whenBecomesTrue(ShooterNew.getInstance().decreasePower);
 
 
         Gamepads.gamepad2().dpadLeft()
