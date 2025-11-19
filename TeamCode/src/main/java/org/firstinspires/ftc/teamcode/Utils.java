@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import dev.nextftc.ftc.ActiveOpMode;
+
 public class Utils {
 
     public static float[] getRGBA(NormalizedColorSensor colorSensor) {
@@ -18,6 +20,7 @@ public class Utils {
         rgba[1] = green;
         rgba[2] = blue;
         rgba[3] = colors.alpha;
+        ActiveOpMode.telemetry().addData("Alpha Detected",colors.alpha);
         return rgba;
     }
 
@@ -54,11 +57,13 @@ public class Utils {
      */
     public static String detectColorName(float[] rgba) {
 
-     /*   if(rgba[0] >= 0.3 && rgba[1] >= 0.6 && rgba[2] >= 0.5) {
+      /*  if(rgba[0] >= 0.3 && rgba[1] >= 0.6 && rgba[2] >= 0.5) {
             return "Nothing";
-        }*/
+        }
+        */
+
         // if Alpha is less .1 then there is no close object to reflect the light.
-        if (rgba[3] <= 0.099) {
+        if (rgba[3] < 0.04) {
             return "Nothing";
         }
         return "Something";
