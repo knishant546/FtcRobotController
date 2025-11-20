@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.ftc.ActiveOpMode;
 import kotlin.Pair;
 
 import dev.nextftc.core.commands.Command;
@@ -27,15 +28,11 @@ public class Lift implements Subsystem {
 
     @Override
     public void initialize() {
-        //telemetry.addData("SubSystemLiftLeft:", getLeftPosition());
-        //telemetry.addData("SubSystemLiftRight:", getRightPosition());
         leftServo.getServo().resetDeviceConfigurationForOpMode();
         rightServo.getServo().resetDeviceConfigurationForOpMode();
         leftServo.getServo().setDirection(Servo.Direction.REVERSE);
         this.liftDown().schedule();
-        //leftServo.setPosition(0.2);
-        //rightServo.setPosition(0.2);
-
+       // ActiveOpMode.telemetry().addData("Lift Initialize Completed  :");
     }
 
     public Command liftUp() {
@@ -47,15 +44,15 @@ public class Lift implements Subsystem {
 
     public Command liftDown() {
         return new SetPositions(
-                new Pair<> (leftServo, 0.5),
-                new Pair<> (rightServo, 0.5)
+                new Pair<> (leftServo, 0.55),
+                new Pair<> (rightServo, 0.55)
         );
     }
 
     public Command LiftUpDown() {
         return new SequentialGroup(
-                liftUp().thenWait(0.5),
-                liftDown().thenWait(0.5)
+                liftUp(),
+                liftDown()
         );
     }
 

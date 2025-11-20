@@ -6,6 +6,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterNew;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
 import dev.nextftc.core.commands.Command;
@@ -50,7 +52,7 @@ public class BlueBack extends NextFTCOpMode {
                         Intake.getInstance(),
                         Spinner.getInstance(),
                         Lift.getInstance(),
-                        Shooter.getInstance()
+                        ShooterNew.getInstance()
                 ),
                 new PedroComponent(Constants::createFollower),
                 BulkReadComponent.INSTANCE
@@ -144,7 +146,7 @@ public class BlueBack extends NextFTCOpMode {
     private Command stopAll() {
         return new SequentialGroup(
                 Intake.getInstance().stopIntake,
-                Shooter.getInstance().stopShooter(),
+                ShooterNew.getInstance().stopShooter(),
                 Spinner.getInstance().stopSpinner()
         );
     }
@@ -157,24 +159,24 @@ public class BlueBack extends NextFTCOpMode {
     private Command autonomousRoutine() {
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
-        Shooter.getInstance().setShooterPowerFactor(0.85);
+        ShooterNew.getInstance().setShooterPowerFactor(0.65);
         Spinner.getInstance().setPower(-0.8);
         return new SequentialGroup(
-                Shooter.getInstance().startShooter(),
+                ShooterNew.getInstance().startShooter(),
                 moveToShoot(),
                 shoot(),
-                Shooter.getInstance().stopShooter(),
+            //    Shooter.getInstance().stopShooter(),
                 moveToPickRowOne(),
                 moveToPickBalls(),
                 Intake.getInstance().stopIntake,
-                Shooter.getInstance().startShooter(),
+                ShooterNew.getInstance().startShooter(),
                 moveToOriginal(),
                 shoot(),
                 moveToPickSecondRow(),
                 moveToPick2SecondRow(),
                 Intake.getInstance().stopIntake,
                 moveBackSecondRow(),
-                Shooter.getInstance().startShooter(),
+          //      Shooter.getInstance().startShooter(),
                 moveToOriginalTwo(),
                 shoot(),
                 stopAll(),
@@ -187,11 +189,10 @@ public class BlueBack extends NextFTCOpMode {
         batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
         NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
         colorSensor.setGain(20);
-        Spinner.getInstance().setColorSensor(colorSensor);
         Intake.getInstance().initialize();
         Spinner.getInstance().initialize();
         Lift.getInstance().initialize();
-        Shooter.getInstance().initialize();
+        ShooterNew.getInstance().initialize();
     }
 
 

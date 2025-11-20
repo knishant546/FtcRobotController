@@ -53,7 +53,11 @@ public class Shooter implements Subsystem {
         this.stopShooter().schedule();
     }
 
+    @Override
+   public void periodic() {
+        givePower();
 
+   }
 
     private Command givePower(){
         double powerTarget = controlSystem.calculate(shootermotor.getState());

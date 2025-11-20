@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
@@ -32,17 +33,9 @@ public class ShooterNew implements Subsystem {
     private long lastTime = 0;
 
     private static final ShooterNew INSTANCE = new ShooterNew();
-    public  PIDCoefficients pidCoefficients = new PIDCoefficients(kP , kI, kD);
-
     private  double powerFactor = 1;
 
-
-
-    private  final ControlSystem controlSystem  = ControlSystem.builder()
-            .velPid(pidCoefficients)
-            .basicFF(kF)
-            .build();
-
+    private double testFactor = 100;
 
     private  double max_goal = 2600;
 
@@ -51,21 +44,18 @@ public class ShooterNew implements Subsystem {
         return INSTANCE;
     }
 
-    public void setShooterMotor(DcMotor motor) {
-        this.shooterMotor = motor;
-        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lastPosition = shooterMotor.getCurrentPosition();
-        lastTime = System.nanoTime();
-    }
-
     private ShooterNew() {
     }
 
     @Override
     public void initialize() {
-
+        this.shooterMotor = ActiveOpMode.hardwareMap().get(DcMotor.class,"shooter");
+        TARGET_VELOCITY = 0;
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lastPosition = shooterMotor.getCurrentPosition();
+        lastTime = System.nanoTime();
     }
 
 
@@ -96,6 +86,9 @@ public class ShooterNew implements Subsystem {
             power = Math.max(-1.0, Math.min(1.0, power));
         }
         shooterMotor.setPower(power);
+        ActiveOpMode.telemetry().addData("Error :",error);
+        ActiveOpMode.telemetry().addData("Test Ratio",testFactor);
+        ActiveOpMode.telemetry().addData("Motor Power :",power);
         ActiveOpMode.telemetry().addData("Motor velocity :",currentVelocity);
         ActiveOpMode.telemetry().addData("Target velocity",TARGET_VELOCITY);
     }
@@ -119,11 +112,16 @@ public class ShooterNew implements Subsystem {
     }
 
     public Command increasePower = new InstantCommand(()->{
-        TARGET_VELOCITY = max_goal * 1;
+        testFactor = testFactor + 5;
+        // 0.85
+        TARGET_VELOCITY = max_goal * (testFactor/100);
     }).requires(this);
 
     public Command decreasePower = new InstantCommand(()->{
-           TARGET_VELOCITY = max_goal * .8;
+        // 0.65
+        testFactor = testFactor - 5;
+        // 0.85
+        TARGET_VELOCITY = max_goal * (testFactor/100);
     }).requires(this);
 
 

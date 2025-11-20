@@ -25,10 +25,11 @@ public class Spinner implements Subsystem {
 
     private AtomicBoolean isRunnning = new AtomicBoolean(false);
 
-    private NormalizedColorSensor colorSensor;
+    private NormalizedColorSensor colorSensor ;
 
     //TODO will change this name to pickMotor
     private final MotorEx spinnerMotor = new MotorEx("spinner");
+
 
     private double pow = -0.65;
 
@@ -40,12 +41,13 @@ public class Spinner implements Subsystem {
 
     @Override
     public void initialize() {
-      //  spinnerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        colorSensor = ActiveOpMode.hardwareMap().get(NormalizedColorSensor.class,"sensor_color_distance");
+        colorSensor.setGain(20);
         this.stopSpinner().schedule();
         setPower(-0.65);
     }
 
-    public void setColorSensor(NormalizedColorSensor colorSensor){
+    private void setColorSensor(NormalizedColorSensor colorSensor){
         this.colorSensor = colorSensor;
     }
 

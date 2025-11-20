@@ -42,18 +42,7 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        //Set up the colorSensor
-        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
-
         batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
-        colorSensor.setGain(20);
-        Spinner.getInstance().setColorSensor(colorSensor);
-        DcMotor shooter = hardwareMap.get(DcMotor.class, "shooter");
-        ShooterNew.getInstance().setShooterMotor(shooter);
-        Lift.getInstance().initialize();
-        Spinner.getInstance().initialize();
-        ShooterNew.getInstance().initialize();
-        Intake.getInstance().initialize();
     }
 
 
@@ -64,7 +53,6 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-
         // Get the current voltage
         double voltage = batteryVoltageSensor.getVoltage();
         telemetry.addData("Battery Voltage", "%.2f V", voltage);
