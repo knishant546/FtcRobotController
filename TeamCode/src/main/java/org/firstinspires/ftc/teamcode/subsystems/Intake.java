@@ -13,7 +13,6 @@ public class Intake implements Subsystem {
         return INSTANCE;
     }
 
-    //TODO will change this name to pickMotor
     private MotorEx intakeMotor = new MotorEx("intake");
 
     private Intake() {

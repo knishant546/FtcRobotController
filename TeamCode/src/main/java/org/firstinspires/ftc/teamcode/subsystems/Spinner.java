@@ -23,7 +23,7 @@ public class Spinner implements Subsystem {
         return INSTANCE;
     }
 
-    private AtomicBoolean isRunnning = new AtomicBoolean(false);
+    private final AtomicBoolean isRunnning = new AtomicBoolean(false);
 
     private NormalizedColorSensor colorSensor ;
 
@@ -47,15 +47,9 @@ public class Spinner implements Subsystem {
         setPower(-0.65);
     }
 
-    private void setColorSensor(NormalizedColorSensor colorSensor){
-        this.colorSensor = colorSensor;
-    }
-
     @Override
     public void periodic() {
-        if (colorSensor != null) {
-            controlBasedColor();
-        }
+        controlBasedColor();
     }
 
     /**
@@ -63,20 +57,21 @@ public class Spinner implements Subsystem {
      * else start the spinner
      */
     private void controlBasedColor(){
-        float[] rgba = Utils.getRGBA(colorSensor);
-        String color = Utils.detectColorName(rgba);
-        ActiveOpMode.telemetry().addData("Color Detected :",color);
-
-        if(color.equals("Nothing")) {
-             startSpinner().schedule();
+        if(Utils.isObjectDetected(colorSensor)) {
+            if (isRunnning.get()) {
+                stopSpinner().schedule();
+            }
         }else{
-             stopSpinner().schedule();
+            if (!isRunnning.get()) {
+                startSpinner().schedule();
+            }
         }
     }
 
     public void setPower(double pow) {
         this.pow = pow;
     }
+
     public Command startSpinner() {
         isRunnning.set(true);
         return new SetPower(spinnerMotor,pow);

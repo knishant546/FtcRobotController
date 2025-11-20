@@ -7,6 +7,19 @@ import dev.nextftc.ftc.ActiveOpMode;
 
 public class Utils {
 
+    /**
+     * Detects the Artifacts near by the color sensor.
+     * Alpha tracks the amount of clear light it observes .If there is a closer Object
+     * light get reflect and it get captureed higher value.
+     * @param colorSensor
+     * @return
+     */
+    public static boolean isObjectDetected(NormalizedColorSensor colorSensor) {
+        float alphaValue = colorSensor.getNormalizedColors().alpha;
+        ActiveOpMode.telemetry().addData("Alpha value :",alphaValue);
+        return (alphaValue >= 0.04);
+    }
+
     public static float[] getRGBA(NormalizedColorSensor colorSensor) {
 
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
