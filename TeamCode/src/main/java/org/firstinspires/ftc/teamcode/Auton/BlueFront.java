@@ -6,14 +6,12 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterNew;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
@@ -26,24 +24,26 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="BlueBack V2.1")
-public class BlueBack extends NextFTCOpMode {
+@Autonomous(name="BlueFront V3")
+public class BlueFront extends NextFTCOpMode {
 
-    Pose startPoseStraight = new Pose(1.5, -32.4, Math.toRadians(180));
-    Pose adjustPoseToShoot = new Pose(46, -9, Math.toRadians(220));
+    Pose startPoseStraight = new Pose(0, 9, Math.toRadians(0));
+    Pose adjustPoseToShoot = new Pose(11, 4, Math.toRadians(22));
 
-    Pose moveToPickRow = new Pose(52, -15, Math.toRadians(270));
+    Pose moveToPickRow = new Pose(29, 18.6, Math.toRadians(90));
 
-    Pose moveToPick2Balls = new Pose(52, -44, Math.toRadians(270));
+    Pose moveToPick2Balls = new Pose(29, 53.5, Math.toRadians(90));
 
-    Pose moveToPickSecondRow = new Pose(76, -17, Math.toRadians(270));
+    Pose moveToPickSecondRow = new Pose(54, 18, Math.toRadians(90));
 
-    Pose moveToPick2SecondBalls = new Pose(76, -52, Math.toRadians(270));
-    Pose adjustOut = new Pose(63, -12, Math.toRadians(270));
+    Pose moveToPick2SecondBalls = new Pose(54, 53.5, Math.toRadians(90));
+    Pose adjustOut = new Pose(26, 7.5, Math.toRadians(22));
 
-    private final double maxPower = 0.9;
+    private final double maxPower = 0.8;
 
-    public BlueBack() {
+    private VoltageSensor batteryVoltageSensor;
+
+    public BlueFront() {
         addComponents(
                 new SubsystemComponent(
                         Intake.getInstance(),
@@ -62,16 +62,18 @@ public class BlueBack extends NextFTCOpMode {
                 .addPath(new BezierLine(fromPosition, toPosition))
                 .setLinearHeadingInterpolation(fromPosition.getHeading(), toPosition.getHeading())
                 .build();
-        return new FollowPath(move, true, maximumPower);
+        return new FollowPath(move, false, maximumPower);
     }
 
     private Command shoot() {
         return Lift.getInstance().LiftUpDown()
+                .then(Spinner.getInstance().startSpinner())
                 .then(Intake.getInstance().startIntake)
                 .then(new Delay(0.5))
                 .then(Lift.getInstance().LiftUpDown()
                 .then(new Delay(0.5))
-                .then(Lift.getInstance().LiftUpDown()));
+                .then(Lift.getInstance().LiftUpDown())
+                .then(Spinner.getInstance().stopSpinner()));
     }
 
     private Command stopAll() {
@@ -88,13 +90,14 @@ public class BlueBack extends NextFTCOpMode {
     }
 
     private Command autonomousRoutine() {
+        Spinner.getInstance().stopColorSensor();
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
-        ShooterNew.getInstance().setShooterPowerFactor(0.7);
+        ShooterNew.getInstance().setShooterPowerFactor(0.8);
+        ShooterNew.getInstance().increasePower.schedule();
         Spinner.getInstance().setPower(-0.8);
         return new SequentialGroup(
-                ShooterNew.getInstance().startShooter(),
-                buildMoveCommand(startPoseStraight,adjustPoseToShoot,this.maxPower),
+                buildMoveCommand(startPoseStraight,adjustPoseToShoot,0.6),
                 shoot(),
                 buildMoveCommand(adjustPoseToShoot,moveToPickRow,this.maxPower),
                 buildMoveCommand(moveToPickRow,moveToPick2Balls,0.35),
@@ -105,8 +108,7 @@ public class BlueBack extends NextFTCOpMode {
                 buildMoveCommand(adjustPoseToShoot,moveToPickSecondRow,this.maxPower),
                 buildMoveCommand(moveToPickSecondRow,moveToPick2SecondBalls,0.35),
                 Intake.getInstance().stopIntake,
-                buildMoveCommand(moveToPick2SecondBalls,moveToPickSecondRow,this.maxPower),
-                buildMoveCommand(moveToPickSecondRow,adjustPoseToShoot,this.maxPower),
+                buildMoveCommand(moveToPick2SecondBalls,adjustPoseToShoot,this.maxPower),
                 shoot(),
                 stopAll(),
                 buildMoveCommand(adjustPoseToShoot,adjustOut,this.maxPower)
@@ -115,19 +117,14 @@ public class BlueBack extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color_distance");
-        colorSensor.setGain(20);
-        Intake.getInstance().initialize();
-        Spinner.getInstance().initialize();
-        Lift.getInstance().initialize();
-        ShooterNew.getInstance().initialize();
+       follower().breakFollowing();
     }
 
 
     @Override
     public void onUpdate() {
         follower().update();
-       /* double voltage = batteryVoltageSensor.getVoltage();
+      /*  double voltage = batteryVoltageSensor.getVoltage();
         telemetry.addData("Battery Voltage", "%.2f V", voltage);
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
@@ -135,14 +132,6 @@ public class BlueBack extends NextFTCOpMode {
         telemetry.update();
     }
 
-
-    @Override
-    public void runOpMode() {
-        double timeMillis = System.currentTimeMillis();
-        super.runOpMode();
-        telemetry.addData("Loop Time" , System.currentTimeMillis() - timeMillis);
-        telemetry.update();
-    }
     @Override
     public void onStartButtonPressed() {
         autonomousRoutine().schedule();

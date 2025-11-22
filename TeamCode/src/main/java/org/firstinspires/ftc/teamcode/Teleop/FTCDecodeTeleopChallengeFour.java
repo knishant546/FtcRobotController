@@ -1,20 +1,15 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.Utils;
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterNew;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -43,6 +38,7 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
     @Override
     public void onInit() {
         batteryVoltageSensor = hardwareMap.voltageSensor.get("Control Hub");
+        ShooterNew.getInstance().setShooterPowerFactor(0.86);
     }
 
 
@@ -54,12 +50,12 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         // Get the current voltage
-        double voltage = batteryVoltageSensor.getVoltage();
-        telemetry.addData("Battery Voltage", "%.2f V", voltage);
-        telemetry.addData("Shooter Power Variable :",ShooterNew.getInstance().getShooterPowerFactor());
-        telemetry.addData("Spinner Power",
-                Spinner.getInstance().getSpinnerPower());
-        telemetry.addData("Shooter Power", ShooterNew.getInstance().getShooterPower());
+
+       // telemetry.addData("Battery Voltage", "%.2f V", voltage);
+       // telemetry.addData("Shooter Power Variable :",ShooterNew.getInstance().getShooterPowerFactor());
+       // telemetry.addData("Spinner Power",
+         //       Spinner.getInstance().getSpinnerPower());
+       // telemetry.addData("Shooter Power", ShooterNew.getInstance().getShooterPower());
         telemetry.update();
     }
 
@@ -81,6 +77,9 @@ public class FTCDecodeTeleopChallengeFour extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
+        Spinner.getInstance().startColorSensor();;
+        double voltage = batteryVoltageSensor.getVoltage();
+        telemetry.addData("Battery Voltage", "%.2f V", voltage);
 
         DriveTrain.getInstance().startDrive.schedule();
         Spinner.getInstance().startSpinner().schedule();
