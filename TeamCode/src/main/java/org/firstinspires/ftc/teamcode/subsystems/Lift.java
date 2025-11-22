@@ -32,7 +32,6 @@ public class Lift implements Subsystem {
         rightServo.getServo().resetDeviceConfigurationForOpMode();
         leftServo.getServo().setDirection(Servo.Direction.REVERSE);
         this.liftDown().schedule();
-       // ActiveOpMode.telemetry().addData("Lift Initialize Completed  :");
     }
 
     public Command liftUp() {
@@ -51,8 +50,8 @@ public class Lift implements Subsystem {
 
     public Command LiftUpDown() {
         return new SequentialGroup(
-                liftUp(),
-                liftDown()
+                liftUp().thenWait(0.5),
+                liftDown().thenWait(0.5)
         );
     }
 

@@ -61,9 +61,9 @@ public class Shooter implements Subsystem {
 
     private Command givePower(){
         double powerTarget = controlSystem.calculate(shootermotor.getState());
-        ActiveOpMode.telemetry().addData("motor power set to: ", powerTarget);
-        ActiveOpMode.telemetry().addData("Motor velocity :",shootermotor.getVelocity());
-        ActiveOpMode.telemetry().addData("Raw velocity",shootermotor.getRawTicks());
+      //  ActiveOpMode.telemetry().addData("motor power set to: ", powerTarget);
+       // ActiveOpMode.telemetry().addData("Motor velocity :",shootermotor.getVelocity());
+       // ActiveOpMode.telemetry().addData("Raw velocity",shootermotor.getRawTicks());
       //  shootermotor.setPower(powerTarget);
         return new SetPower(shootermotor,powerTarget);
     }

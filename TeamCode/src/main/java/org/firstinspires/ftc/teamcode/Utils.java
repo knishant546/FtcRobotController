@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import java.util.HashMap;
 
 import dev.nextftc.ftc.ActiveOpMode;
 
@@ -17,7 +21,7 @@ public class Utils {
     public static boolean isObjectDetected(NormalizedColorSensor colorSensor) {
         float alphaValue = colorSensor.getNormalizedColors().alpha;
         ActiveOpMode.telemetry().addData("Alpha value :",alphaValue);
-        return (alphaValue >= 0.04);
+        return (alphaValue >= 0.045);
     }
 
     public static float[] getRGBA(NormalizedColorSensor colorSensor) {
@@ -80,6 +84,28 @@ public class Utils {
             return "Nothing";
         }
         return "Something";
+    }
+
+   private static HashMap<Double,VoltageRecord> voltageTable = new HashMap<>();
+
+    public static VoltageRecord getVoltageRecord(){
+        VoltageSensor batteryVoltageSensor = ActiveOpMode.hardwareMap().voltageSensor.get("Control Hub");
+        ActiveOpMode.telemetry().addData("Battery Voltage", "%.2f V", batteryVoltageSensor.getVoltage());
+        double currentVoltage = roundToHalf(batteryVoltageSensor.getVoltage());
+        VoltageRecord voltageRecord = voltageTable.get(currentVoltage);
+        if (voltageRecord != null) {
+            ActiveOpMode.telemetry().addData("Not Found Voltage", currentVoltage);
+            return voltageRecord;
+        }
+       return new VoltageRecord(12.5,-1,-1,0.35,1,0.7);
+    }
+
+    public static double roundToHalf(double v) {
+        return Math.round(v * 2) / 2.0;
+    }
+    public static void popuplateTable() {
+
+        voltageTable.put(13.0,new VoltageRecord(13,-1,-1,0.35,1,0.7));
     }
 
 }

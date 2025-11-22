@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.teamcode.Utils;
@@ -9,7 +7,6 @@ import org.firstinspires.ftc.teamcode.Utils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -33,6 +30,18 @@ public class Spinner implements Subsystem {
 
     private double pow = -0.65;
 
+    private double lastTime = System.nanoTime();
+
+    private boolean startColorSensor;
+
+    public void startColorSensor(){
+        this.startColorSensor = true;
+    }
+
+    public void stopColorSensor() {
+        this.startColorSensor = false;
+    }
+
     private Spinner() {
     }
     public float getSpinnerPower() {
@@ -41,19 +50,32 @@ public class Spinner implements Subsystem {
 
     @Override
     public void initialize() {
-        colorSensor = ActiveOpMode.hardwareMap().get(NormalizedColorSensor.class,"sensor_color_distance");
-        colorSensor.setGain(20);
         this.stopSpinner().schedule();
         setPower(-0.65);
+        this.startColorSensor = false;
+        lastTime = System.nanoTime();
+    }
+
+    public void initColorSensor() {
+        colorSensor = ActiveOpMode.hardwareMap().get(NormalizedColorSensor.class,"sensor_color_distance");
+        colorSensor.setGain(20);
     }
 
     @Override
     public void periodic() {
-        controlBasedColor();
+        if (this.startColorSensor && colorSensor != null) {
+            double dt = (System.nanoTime() - lastTime) / 1e9;
+            if (dt <= 1) {
+                return;
+            }
+            lastTime = dt;
+            controlBasedColor();
+        }
+
     }
 
     /**
-     * Check the Color Sensor and if it detects the color , then stop the spinner
+     * Check the Color Sensor and if it detects the Object , then stop the spinner
      * else start the spinner
      */
     private void controlBasedColor(){

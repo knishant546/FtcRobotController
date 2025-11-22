@@ -20,11 +20,11 @@ public class ShooterTunerOpMode extends LinearOpMode {
 
     // PIDF coefficients
     public static double kP = 0.00023;
-    public static double kI = 0.00001;
-    public static double kD = 0;
-    public static double kF = 0.00037;
+    public static double kI = 0.000115;
+    public static double kD = 0.000115;
+    public static double kF = 0.000405;
 
-    public static double TARGET_VELOCITY = 1000; // ticks/sec
+    public static double TARGET_VELOCITY = 1500; // ticks/sec
 
     private DcMotor shooterMotor;
 
@@ -35,6 +35,8 @@ public class ShooterTunerOpMode extends LinearOpMode {
     // For manual velocity calculation
     private int lastPosition = 0;
     private long lastTime = 0;
+
+    private long startTime = System.nanoTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -55,8 +57,10 @@ public class ShooterTunerOpMode extends LinearOpMode {
         while (opModeIsActive()) {
             long now = System.nanoTime();
             double dt = (now - lastTime) / 1e9; // seconds
+            if (dt < 1){
+                continue;
+            }
             lastTime = now;
-
             // Get current position
             int currentPosition = shooterMotor.getCurrentPosition();
 
@@ -82,6 +86,7 @@ public class ShooterTunerOpMode extends LinearOpMode {
             packet.put("TargetVelocity", TARGET_VELOCITY);
             packet.put("CurrentVelocity", currentVelocity);
             packet.put("MotorPower", power);
+            packet.put("Time Spent", (now -startTime) /1e9 );
             packet.put("Error", error);
             packet.put("kP", kP);
             packet.put("kI", kI);

@@ -16,9 +16,9 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class ShooterNew implements Subsystem {
 
     private final double kP = 0.00023;
-    private final double kI = 0.00001;
-    private final double kD = 0;
-    private final double kF = 0.00037;
+    private final double kI = 0.000115;
+    private final double kD = 0.000115;
+    private final double kF = 0.000405;
 
     private double TARGET_VELOCITY = 0; // ticks/sec
 
@@ -34,8 +34,6 @@ public class ShooterNew implements Subsystem {
 
     private static final ShooterNew INSTANCE = new ShooterNew();
     private  double powerFactor = 1;
-
-    private double testFactor = 100;
 
     private  double max_goal = 2600;
 
@@ -56,6 +54,9 @@ public class ShooterNew implements Subsystem {
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lastPosition = shooterMotor.getCurrentPosition();
         lastTime = System.nanoTime();
+        integral =0;
+        lastError=0;
+        powerFactor = 1;
     }
 
 
@@ -63,13 +64,15 @@ public class ShooterNew implements Subsystem {
     public void periodic() {
         long now = System.nanoTime();
         double dt = (now - lastTime) / 1e9; // seconds
-        lastTime = now;
-
         // Get current position
         int currentPosition = shooterMotor.getCurrentPosition();
-
         // Calculate velocity in ticks/sec
         double currentVelocity = (currentPosition - lastPosition) / dt;
+        // We dont want to tune more often
+        if (dt < 1){
+            return;
+        }
+        lastTime = now;
         lastPosition = currentPosition;
 
         // PIDF calculation
@@ -85,12 +88,9 @@ public class ShooterNew implements Subsystem {
             // Clamp power between -1 and 1
             power = Math.max(-1.0, Math.min(1.0, power));
         }
+
         shooterMotor.setPower(power);
-        ActiveOpMode.telemetry().addData("Error :",error);
-        ActiveOpMode.telemetry().addData("Test Ratio",testFactor);
-        ActiveOpMode.telemetry().addData("Motor Power :",power);
-        ActiveOpMode.telemetry().addData("Motor velocity :",currentVelocity);
-        ActiveOpMode.telemetry().addData("Target velocity",TARGET_VELOCITY);
+
     }
 
     public float getShooterPower() {
@@ -107,21 +107,17 @@ public class ShooterNew implements Subsystem {
 
     public Command startShooter() {
          return new InstantCommand(() -> {
-             TARGET_VELOCITY = max_goal * 1;
+             TARGET_VELOCITY = max_goal * powerFactor;
          }).requires(this);
     }
 
     public Command increasePower = new InstantCommand(()->{
-        testFactor = testFactor + 5;
-        // 0.85
-        TARGET_VELOCITY = max_goal * (testFactor/100);
+        TARGET_VELOCITY = max_goal * powerFactor * 1;
     }).requires(this);
 
     public Command decreasePower = new InstantCommand(()->{
         // 0.65
-        testFactor = testFactor - 5;
-        // 0.85
-        TARGET_VELOCITY = max_goal * (testFactor/100);
+        TARGET_VELOCITY = max_goal * powerFactor * 0.75;
     }).requires(this);
 
 
