@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
 
@@ -23,7 +24,14 @@ public class Intake implements Subsystem {
         this.stopIntake.schedule();
     }
 
-    public Command startIntake = new SetPower(intakeMotor,-1.0);
+    public Command startIntake =  new SetPower(intakeMotor,-1.0);
+
+  /*  public Command startIntake = new InstantCommand(()->{
+        new SetPower(intakeMotor,-1.0).schedule();
+    }).requires(this);*/
 
     public Command stopIntake = new SetPower(intakeMotor,0.0);
+  /* public Command stopIntake = new InstantCommand(()->{
+       new SetPower(intakeMotor,0.0).schedule();
+   }).requires(this);*/
 }

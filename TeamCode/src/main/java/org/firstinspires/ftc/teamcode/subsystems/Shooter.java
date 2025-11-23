@@ -53,21 +53,6 @@ public class Shooter implements Subsystem {
         this.stopShooter().schedule();
     }
 
-    @Override
-   public void periodic() {
-        givePower();
-
-   }
-
-    private Command givePower(){
-        double powerTarget = controlSystem.calculate(shootermotor.getState());
-      //  ActiveOpMode.telemetry().addData("motor power set to: ", powerTarget);
-       // ActiveOpMode.telemetry().addData("Motor velocity :",shootermotor.getVelocity());
-       // ActiveOpMode.telemetry().addData("Raw velocity",shootermotor.getRawTicks());
-      //  shootermotor.setPower(powerTarget);
-        return new SetPower(shootermotor,powerTarget);
-    }
-
     public float getShooterPower() {
         return (float) shootermotor.getPower();
     }
@@ -82,9 +67,7 @@ public class Shooter implements Subsystem {
 
     public Command startShooter() {
          return new InstantCommand(() -> {
-             new RunToVelocity(controlSystem, max_goal * powerFactor).then(givePower()).
-                     requires(this).schedule();
-
+            new SetPower(shootermotor,powerFactor);
          }).requires(this);
     }
 
@@ -102,7 +85,7 @@ public class Shooter implements Subsystem {
 
     public Command stopShooter() {
         return new InstantCommand(() -> {
-            new RunToVelocity(controlSystem, 0).then(givePower()).requires(this).schedule();
+            new SetPower(shootermotor,0);
         }).requires(this);
     }
 }

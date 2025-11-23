@@ -90,7 +90,6 @@ public class BlueFront extends NextFTCOpMode {
     }
 
     private Command autonomousRoutine() {
-        Spinner.getInstance().stopColorSensor();
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
         ShooterNew.getInstance().setShooterPowerFactor(0.8);

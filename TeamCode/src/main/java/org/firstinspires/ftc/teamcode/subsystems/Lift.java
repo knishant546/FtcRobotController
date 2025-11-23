@@ -50,8 +50,8 @@ public class Lift implements Subsystem {
 
     public Command LiftUpDown() {
         return new SequentialGroup(
-                liftUp().thenWait(0.5),
-                liftDown().thenWait(0.5)
+                liftUp().thenWait(0.25),
+                liftDown().thenWait(0.25)
         );
     }
 

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
+import org.firstinspires.ftc.teamcode.Sensors.ColorSensor;
 import org.firstinspires.ftc.teamcode.Utils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,56 +24,40 @@ public class Spinner implements Subsystem {
 
     private final AtomicBoolean isRunnning = new AtomicBoolean(false);
 
-    private NormalizedColorSensor colorSensor ;
 
     //TODO will change this name to pickMotor
-    private final MotorEx spinnerMotor = new MotorEx("spinner");
+    private  MotorEx spinnerMotor = new MotorEx("spinner");
 
+
+    private ColorSensor colorSensor ;
 
     private double pow = -0.65;
 
-    private double lastTime = System.nanoTime();
-
-    private boolean startColorSensor;
-
-    public void startColorSensor(){
-        this.startColorSensor = true;
-    }
-
-    public void stopColorSensor() {
-        this.startColorSensor = false;
-    }
-
     private Spinner() {
     }
+
+    public void setColorSensor(ColorSensor colorSensor) {
+        this.colorSensor = colorSensor;
+    }
+
     public float getSpinnerPower() {
         return (float) spinnerMotor.getPower();
     }
 
     @Override
     public void initialize() {
+       // spinnerMotor =  ActiveOpMode.hardwareMap().get(DcMotor.class,"spinner");
+        this.spinnerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.stopSpinner().schedule();
         setPower(-0.65);
-        this.startColorSensor = false;
-        lastTime = System.nanoTime();
     }
 
-    public void initColorSensor() {
-        colorSensor = ActiveOpMode.hardwareMap().get(NormalizedColorSensor.class,"sensor_color_distance");
-        colorSensor.setGain(20);
-    }
 
     @Override
     public void periodic() {
-        if (this.startColorSensor && colorSensor != null) {
-            double dt = (System.nanoTime() - lastTime) / 1e9;
-            if (dt <= 1) {
-                return;
-            }
-            lastTime = dt;
+        if (colorSensor != null){
             controlBasedColor();
         }
-
     }
 
     /**
@@ -79,13 +65,13 @@ public class Spinner implements Subsystem {
      * else start the spinner
      */
     private void controlBasedColor(){
-        if(Utils.isObjectDetected(colorSensor)) {
+        if (colorSensor.isObjectDetected()) {
             if (isRunnning.get()) {
-                stopSpinner().schedule();
+               stopSpinner().schedule();
             }
         }else{
             if (!isRunnning.get()) {
-                startSpinner().schedule();
+               startSpinner().schedule();
             }
         }
     }

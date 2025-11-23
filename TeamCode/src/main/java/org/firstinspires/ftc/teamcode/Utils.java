@@ -97,7 +97,7 @@ public class Utils {
             ActiveOpMode.telemetry().addData("Not Found Voltage", currentVoltage);
             return voltageRecord;
         }
-       return new VoltageRecord(12.5,-1,-1,0.35,1,0.7);
+       return new VoltageRecord(12.5,-1,-1,0.35,1,0.65);
     }
 
     public static double roundToHalf(double v) {
@@ -105,7 +105,7 @@ public class Utils {
     }
     public static void popuplateTable() {
 
-        voltageTable.put(13.0,new VoltageRecord(13,-1,-1,0.35,1,0.7));
+        voltageTable.put(13.0,new VoltageRecord(13,-1,-1,0.35,1,0.65));
     }
 
 }

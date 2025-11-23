@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import dev.nextftc.control.ControlSystem;
@@ -22,7 +25,7 @@ public class ShooterNew implements Subsystem {
 
     private double TARGET_VELOCITY = 0; // ticks/sec
 
-    private DcMotor shooterMotor;
+    private DcMotorEx shooterMotor;
 
     // PIDF internal state
     private double integral = 0;
@@ -47,11 +50,11 @@ public class ShooterNew implements Subsystem {
 
     @Override
     public void initialize() {
-        this.shooterMotor = ActiveOpMode.hardwareMap().get(DcMotor.class,"shooter");
-        TARGET_VELOCITY = 0;
+        this.shooterMotor = ActiveOpMode.hardwareMap().get(DcMotorEx.class,"shooter");
+        TARGET_VELOCITY = 2600;
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lastPosition = shooterMotor.getCurrentPosition();
         lastTime = System.nanoTime();
         integral =0;
@@ -60,8 +63,9 @@ public class ShooterNew implements Subsystem {
     }
 
 
-    @Override
-    public void periodic() {
+   // @Override
+    public void periodic1() {
+
         long now = System.nanoTime();
         double dt = (now - lastTime) / 1e9; // seconds
         // Get current position
@@ -108,16 +112,19 @@ public class ShooterNew implements Subsystem {
     public Command startShooter() {
          return new InstantCommand(() -> {
              TARGET_VELOCITY = max_goal * powerFactor;
+             shooterMotor.setVelocity(TARGET_VELOCITY);
          }).requires(this);
     }
 
     public Command increasePower = new InstantCommand(()->{
-        TARGET_VELOCITY = max_goal * powerFactor * 1;
+        TARGET_VELOCITY = max_goal * powerFactor * 0.85;
+        shooterMotor.setVelocity(TARGET_VELOCITY);
     }).requires(this);
 
     public Command decreasePower = new InstantCommand(()->{
         // 0.65
-        TARGET_VELOCITY = max_goal * powerFactor * 0.75;
+        TARGET_VELOCITY = max_goal * powerFactor * 0.7;
+        shooterMotor.setVelocity(TARGET_VELOCITY);
     }).requires(this);
 
 
@@ -125,6 +132,7 @@ public class ShooterNew implements Subsystem {
     public Command stopShooter() {
         return new InstantCommand(() -> {
             TARGET_VELOCITY = 0;
+            shooterMotor.setVelocity(TARGET_VELOCITY);
         }).requires(this);
     }
 }
