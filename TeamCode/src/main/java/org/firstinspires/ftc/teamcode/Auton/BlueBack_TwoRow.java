@@ -26,8 +26,8 @@ import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="BlueFront V3")
-public class BlueFront_V2 extends NextFTCOpMode {
+@Autonomous(name="BlueBack Two-Row-V1")
+public class BlueBack_TwoRow extends NextFTCOpMode {
 
     Pose startPoseStraight = null;
     Pose adjustPoseToShoot = null;
@@ -45,7 +45,7 @@ public class BlueFront_V2 extends NextFTCOpMode {
 
     private ColorSensor colorSensor ;
 
-    public BlueFront_V2() {
+    public BlueBack_TwoRow() {
         addComponents(
                 new SubsystemComponent(
                         IntakeAuto.getInstance(),
@@ -69,17 +69,17 @@ public class BlueFront_V2 extends NextFTCOpMode {
     }
 
     private void buildPath() {
-        startPoseStraight = new Pose(0, 9, Math.toRadians(0));
-        adjustPoseToShoot = new Pose(11, 4, Math.toRadians(22));
+        startPoseStraight = new Pose(1.5, -32.4, Math.toRadians(180));
+        adjustPoseToShoot = new Pose(46, -9, Math.toRadians(220));
 
-        moveToPickRow = new Pose(29, 18.6, Math.toRadians(90));
+        moveToPickRow = new Pose(52, -17, Math.toRadians(270));
 
-        moveToPick2Balls = new Pose(29, 53.5, Math.toRadians(90));
+        moveToPick2Balls = new Pose(52, -44, Math.toRadians(270));
 
-        moveToPickSecondRow = new Pose(54, 18, Math.toRadians(90));
+        moveToPickSecondRow = new Pose(75, -17, Math.toRadians(270));
 
-        moveToPick2SecondBalls = new Pose(54, 53.5, Math.toRadians(90));
-        adjustOut = new Pose(26, 7.5, Math.toRadians(22));
+        moveToPick2SecondBalls = new Pose(75, -52, Math.toRadians(270));
+        adjustOut = new Pose(63, -12, Math.toRadians(270));
     }
     private Command shoot() {
         return new SequentialGroup(
@@ -91,6 +91,15 @@ public class BlueFront_V2 extends NextFTCOpMode {
                 Lift.getInstance().LiftUpDown()
         );
 
+       /* return Lift.getInstance().LiftUpDown()
+            //   .then(Spinner.getInstance().startSpinner())
+            //    .then(Intake.getInstance().startIntake)
+             //   .then(new Delay(0.5))
+                .then(Lift.getInstance().LiftUpDown()
+           //     .then(new Delay(0.5))
+                .then(Lift.getInstance().LiftUpDown())
+             //           .then(Spinner.getInstance().stopSpinner())
+                );*/
     }
 
     private Command stopAll() {
@@ -145,13 +154,22 @@ public class BlueFront_V2 extends NextFTCOpMode {
 
         follower().setStartingPose(startPoseStraight);
         follower().setPose(startPoseStraight);
-        ShooterNew.getInstance().setShooterPowerFactor(0.85);
+        ShooterNew.getInstance().setShooterPowerFactor(0.65);
         Spinner.getInstance().setPower(-0.8);
     }
 
 
     @Override
     public void onUpdate() {
+    /*    long currentTime = System.currentTimeMillis();
+        long dt = currentTime - loopTime;
+        telemetry.addData("loop Time", dt);
+        loopTime =currentTime;*/
+
+  //      follower().update();
+      //  telemetry.addData("x", follower().getPose().getX());
+      //  telemetry.addData("y", follower().getPose().getY());
+      //  telemetry.addData("heading", follower().getPose().getHeading());
         telemetry.update();
     }
 

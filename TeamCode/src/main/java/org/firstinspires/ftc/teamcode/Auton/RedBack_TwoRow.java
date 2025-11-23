@@ -7,23 +7,16 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Sensors.ColorSensor;
-import org.firstinspires.ftc.teamcode.Utils;
-import org.firstinspires.ftc.teamcode.VoltageRecord;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterNew;
 import org.firstinspires.ftc.teamcode.subsystems.Spinner;
-import org.firstinspires.ftc.teamcode.subsystems.SpinnerAuto;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -33,8 +26,8 @@ import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="BlueBack V3.01")
-public class BlueBack_Voltage extends NextFTCOpMode {
+@Autonomous(name="RedBack Two-Row-V1")
+public class RedBack_TwoRow extends NextFTCOpMode {
 
     Pose startPoseStraight = null;
     Pose adjustPoseToShoot = null;
@@ -52,7 +45,7 @@ public class BlueBack_Voltage extends NextFTCOpMode {
 
     private ColorSensor colorSensor ;
 
-    public BlueBack_Voltage() {
+    public RedBack_TwoRow() {
         addComponents(
                 new SubsystemComponent(
                         IntakeAuto.getInstance(),
@@ -76,17 +69,17 @@ public class BlueBack_Voltage extends NextFTCOpMode {
     }
 
     private void buildPath() {
-        startPoseStraight = new Pose(1.5, -32.4, Math.toRadians(180));
-        adjustPoseToShoot = new Pose(46, -9, Math.toRadians(220));
+        startPoseStraight = new Pose(1.5, 32.4, Math.toRadians(180));
+        adjustPoseToShoot = new Pose(46, 9, Math.toRadians(140));
 
-        moveToPickRow = new Pose(52, -17, Math.toRadians(270));
+        moveToPickRow = new Pose(52, 17, Math.toRadians(90));
 
-        moveToPick2Balls = new Pose(52, -44, Math.toRadians(270));
+        moveToPick2Balls = new Pose(52, 44, Math.toRadians(90));
 
-        moveToPickSecondRow = new Pose(75, -17, Math.toRadians(270));
+        moveToPickSecondRow = new Pose(75, 17, Math.toRadians(90));
 
-        moveToPick2SecondBalls = new Pose(75, -52, Math.toRadians(270));
-        adjustOut = new Pose(63, -12, Math.toRadians(270));
+        moveToPick2SecondBalls = new Pose(75, 52, Math.toRadians(90));
+        adjustOut = new Pose(63, 12, Math.toRadians(90));
     }
     private Command shoot() {
         return new SequentialGroup(

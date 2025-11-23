@@ -24,7 +24,7 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name="BlueFront V3")
+@Autonomous(name="BlueFront V2.9")
 public class BlueFront extends NextFTCOpMode {
 
     Pose startPoseStraight = new Pose(0, 9, Math.toRadians(0));
