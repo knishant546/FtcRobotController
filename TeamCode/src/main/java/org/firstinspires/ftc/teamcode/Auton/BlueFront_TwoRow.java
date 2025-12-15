@@ -70,15 +70,15 @@ public class BlueFront_TwoRow extends NextFTCOpMode {
 
     private void buildPath() {
         startPoseStraight = new Pose(0, 9, Math.toRadians(0));
-        adjustPoseToShoot = new Pose(11, 4, Math.toRadians(23));
+        adjustPoseToShoot = new Pose(11, 4, Math.toRadians(24));
 
-        moveToPickRow = new Pose(29, 18.6, Math.toRadians(90));
+        moveToPickRow = new Pose(27, 18.6, Math.toRadians(90));
 
-        moveToPick2Balls = new Pose(29, 53.5, Math.toRadians(90));
+        moveToPick2Balls = new Pose(27, 53.5, Math.toRadians(90));
 
-        moveToPickSecondRow = new Pose(54, 18, Math.toRadians(90));
+        moveToPickSecondRow = new Pose(49, 18, Math.toRadians(90));
 
-        moveToPick2SecondBalls = new Pose(54, 53.5, Math.toRadians(90));
+        moveToPick2SecondBalls = new Pose(49, 53.5, Math.toRadians(90));
         adjustOut = new Pose(26, 7.5, Math.toRadians(22));
     }
     private Command shoot() {

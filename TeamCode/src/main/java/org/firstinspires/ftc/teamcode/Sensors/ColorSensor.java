@@ -37,7 +37,7 @@ public class ColorSensor implements Runnable{
     public boolean isObjectDetected() {
         float alphaValue = colorSensor.getNormalizedColors().alpha;
         ActiveOpMode.telemetry().addData("Alpha value :",alphaValue);
-        this.isDetected = (alphaValue >= 0.04);
+        this.isDetected = (alphaValue >= 0.07);
         return this.isDetected;
     }
 

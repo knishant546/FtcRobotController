@@ -72,13 +72,13 @@ public class BlueBack_TwoRow extends NextFTCOpMode {
         startPoseStraight = new Pose(1.5, -32.4, Math.toRadians(180));
         adjustPoseToShoot = new Pose(46, -9, Math.toRadians(220));
 
-        moveToPickRow = new Pose(52, -17, Math.toRadians(270));
+        moveToPickRow = new Pose(50, -17, Math.toRadians(270));
 
-        moveToPick2Balls = new Pose(52, -44, Math.toRadians(270));
+        moveToPick2Balls = new Pose(50, -44, Math.toRadians(270));
 
-        moveToPickSecondRow = new Pose(75, -17, Math.toRadians(270));
+        moveToPickSecondRow = new Pose(73, -17, Math.toRadians(270));
 
-        moveToPick2SecondBalls = new Pose(75, -52, Math.toRadians(270));
+        moveToPick2SecondBalls = new Pose(73, -52, Math.toRadians(270));
         adjustOut = new Pose(63, -12, Math.toRadians(270));
     }
     private Command shoot() {

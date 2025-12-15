@@ -32,6 +32,7 @@ public class RedBack_TwoRow extends NextFTCOpMode {
     Pose startPoseStraight = null;
     Pose adjustPoseToShoot = null;
 
+
     Pose moveToPickRow = null;
 
     Pose moveToPick2Balls = null;
@@ -72,9 +73,9 @@ public class RedBack_TwoRow extends NextFTCOpMode {
         startPoseStraight = new Pose(1.5, 32.4, Math.toRadians(180));
         adjustPoseToShoot = new Pose(46, 9, Math.toRadians(140));
 
-        moveToPickRow = new Pose(52, 17, Math.toRadians(90));
+        moveToPickRow = new Pose(51, 17, Math.toRadians(90));
 
-        moveToPick2Balls = new Pose(52, 44, Math.toRadians(90));
+        moveToPick2Balls = new Pose(51, 44, Math.toRadians(90));
 
         moveToPickSecondRow = new Pose(75, 17, Math.toRadians(90));
 
